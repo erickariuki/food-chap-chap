@@ -13,14 +13,31 @@ const followUnFollowUser = async () => {
         const isFollowing = currentUser.following.includes(id);
 
         if(isFollowing) {
-
+            // unfollow user
+            // Modify current user following, modify followers of userToModify
+            await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
+            await User.findByIdAndUpdate(id, { $pull : { followers: req.user._id } });
+            res.status(200).json({ message: "User unfollowed successfully"})
         }else {
-            
+            // follow user
+            await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
+            await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
+            res.status(200).json({ message: "User followed successfully"})
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
-        console.log ("")
+        console.log ("Error in followUnFollowUser:", error.message);
     }
+    // const updateUser = async (req, res) => {
+    //     const { name, email, username, password, profilepic, bio} = req.body;
+    //     const userId = req.user._id;
+    //     try {
+            
+    //     } catch (error) {
+    //         res.status(500).json({ message: error.message});
+    //         console.log ("Error in updateUser:", error.message);
+    //     }
+    // }
 }
 
 export { signupUser };
