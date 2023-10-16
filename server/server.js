@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import session from 'express-session';
 import cookieParser from "cookie-parser";
 import userRouter from './router/userRoutes.js';
+import postRouter from './router/postRoutes.js';
 
 const app = express();
 
@@ -42,6 +43,7 @@ const port = 8080;
 // API ROUTES
 app.use("/api", router);
 app.use("/api/users", userRouter)
+app.use('/api/posts', postRouter),
 
 app.get("/", (req, res) => {
   res.redirect("http://localhost:4000/auth/google"); // Redirect to Google authentication URL
