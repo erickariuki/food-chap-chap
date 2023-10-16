@@ -6,6 +6,8 @@ import router from './router/routes.js';
 import passport from 'passport';
 import crypto from 'crypto';
 import session from 'express-session';
+import cookieParser from "cookie-parser";
+import userRouter from './router/userRoutes.js';
 
 const app = express();
 
@@ -26,6 +28,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+app.use(cookieParser());
+app.use(cors());
 app.use(morgan("tiny"));
 app.disable("x-powered-by");
 app.set('view engine', 'ejs');
@@ -36,6 +41,7 @@ const port = 8080;
 
 // API ROUTES
 app.use("/api", router);
+app.use("/api/users", userRouter)
 
 app.get("/", (req, res) => {
   res.redirect("http://localhost:4000/auth/google"); // Redirect to Google authentication URL
