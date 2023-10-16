@@ -32,3 +32,9 @@ const createPost = async (req, res) => {
         console.log(error)
     }
 }
+
+const getPost = async (req, res) => {
+    
+}
+
+export { createPost, getPost};
