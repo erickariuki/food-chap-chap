@@ -5,6 +5,7 @@ import connect from './database/conn.js';
 import router from './router/routes.js';
 import cookieParser from "cookie-parser";
 import userRouter from './router/userRoutes.js';
+import postRouter from './router/postRoutes.js';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 // API ROUTES
 app.use("/api", router);
 app.use("/api/users", userRouter)
+app.use('/api/posts', postRouter),
 
 
 // start server only when mongodb connected
