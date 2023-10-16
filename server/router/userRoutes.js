@@ -1,10 +1,11 @@
 import express from 'express';
-import { followUnFollowUser, updateUser } from '../controllers/userController.js';
+import { followUnFollowUser, getUserProfile } from '../controllers/userController.js';
 import Auth from '../middleware/auth.js';
 
 const router = express.Router();
 
+router.get('/profile/:username', getUserProfile);
 router.post('/follow/:id', Auth, followUnFollowUser);
-router.post('/update/:id', Auth, updateUser)
+// router.post('/update/:id', Auth, updateUser)
 
 export default router;
