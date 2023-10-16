@@ -4,7 +4,7 @@ import Auth from '../middleware/auth.js'
 
 const postRouter = express.Router();
 
-postRouter.get('/', getPost)
+postRouter.get('/:id', getPost)
 postRouter.post('/create', Auth, createPost)
 
 export default postRouter;
