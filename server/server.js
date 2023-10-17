@@ -3,6 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import connect from './database/conn.js';
 import router from './router/routes.js';
+// import mongoDBURL from './config.js';
 
 const app = express();
 
