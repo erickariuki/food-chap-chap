@@ -9,6 +9,7 @@ import session from 'express-session';
 import cookieParser from "cookie-parser";
 import userRouter from './router/userRoutes.js';
 import postRouter from './router/postRoutes.js';
+import blogRouter from './router/blogRoutes.js';
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.get("/", (req, res) => {
 app.use("/api", router);
 app.use("/api/users", userRouter)
 app.use('/api/posts', postRouter),
+app.use('/api/blogs', blogRouter)
 
 app.get("/", (req, res) => {
   res.redirect("http://localhost:4000/auth/google"); // Redirect to Google authentication URL
