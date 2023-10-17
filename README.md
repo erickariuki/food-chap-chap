@@ -92,7 +92,7 @@ install this
     npm install react-google-recaptcha
     npm install react-type-animation sweetalert2 react-quill
 # Generate JWT SECRET
-openssl rand -base64 32 //To generate JWT Secret
+openssl rand -base64 32 
 
 # Create an Ethereal Email
 create Ethereal Email : https://ethereal.email/create
