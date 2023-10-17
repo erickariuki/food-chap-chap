@@ -37,7 +37,16 @@ app.set('view engine', 'ejs');
 app.use(passport.initialize());
 app.use(passport.session());
 
-const port = 8080;
+
+
+const port = 8080
+
+// HTTP GET Request 
+
+app.get("/", (req, res) => {
+    res.status(201).json("Home Get Request")
+})
+
 
 // API ROUTES
 app.use("/api", router);
