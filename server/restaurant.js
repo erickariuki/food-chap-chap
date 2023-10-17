@@ -1,14 +1,33 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import mongoose from 'mongoose';
+
+const { Schema, model } = mongoose;
 
 const restaurantSchema = new Schema({
-    name: String,
-    location: String,
-    contact: String,
-    cuisine: String,
-    openingHours: String,
-    ratings: [Number]
+    name: {
+        type: String,
+        required: true,
+    },
+    location: {
+        type: String,
+        required: true,
+    },
+    contact: {
+        type: String,
+        required: true,
+    },
+    cuisine: {
+        type: String,
+        required: true,
+    },
+    openingHours: {
+        type: String,
+        required: true,
+    },
+    ratings: [Number],
+}, {
+    timestamps: true,
 });
 
-const Restaurant = mongoose.model('Restaurant', restaurantSchema);
-module.exports = Restaurant;
+const Restaurant = model('Restaurant', restaurantSchema);
+
+export default Restaurant;
