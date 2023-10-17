@@ -28,3 +28,5 @@ const blogSchema = new mangoose.Schema({
     comments: [commentSchema],
     replies: [replySchema],
 });
+
+export const Blog = mangoose.model("Blog", blogSchema);
