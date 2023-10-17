@@ -8,6 +8,7 @@ import router from './router/routes.js';
 
 import userRouter from './router/userRoutes.js';
 import postRouter from './router/postRoutes.js';
+import blogRouter from './router/blogRoutes.js';
 
 
 const app = express();
@@ -34,6 +35,7 @@ app.get("/", (req, res) => {
 app.use("/api", router);
 app.use("/api/users", userRouter)
 app.use('/api/posts', postRouter),
+app.use('/api/blogs', blogRouter)
 
 
 // start server only when mongodb connected
