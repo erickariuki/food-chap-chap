@@ -4,8 +4,12 @@ import Auth from '../middleware/auth.js';
 
 const UserRouter = express.Router();
 
-// UserRouter.get('/profile/:username', getUserProfile);
-UserRouter.post('/follow/:id', Auth, followUnFollowUser);
-// router.post('/update/:id', Auth, updateUser)
+UserRouter.use(Auth); // Applying authentication middleware to all routes below
+
+// POST route to follow/unfollow a user
+UserRouter.post('/follow/:id', followUnFollowUser);
+
+// PUT route to update user profile
+// UserRouter.put('/update', updateUser);
 
 export default UserRouter;

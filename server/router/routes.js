@@ -1,30 +1,37 @@
 import { Router } from "express";
-const router = Router();
-
-/** import all controllers */
+import bcrypt from 'bcrypt';
+import UserModel from '../model/User.model.js';
 import * as controller from '../controllers/appController.js';
-import { registerMail } from '../controllers/mailer.js'
+import { registerMail } from '../controllers/mailer.js';
 import Auth, { localVariables } from '../middleware/auth.js';
 
-
+const router = Router();
 
 /** POST Methods */
-router.route('/register').post(controller.register); // register user
-router.route('/registerMail').post(registerMail); // send the email
-router.route('/authenticate').post(controller.verifyUser, (req, res) => res.end()); // authenticate user
-router.route('/login').post(controller.verifyUser,controller.login); // login in app
+router.route('/register').post(controller.register); // Register user
+router.route('/registerMail').post(registerMail); // Send email for registration
+router.route('/authenticate').post(controller.verifyUser, (req, res) => res.end()); // Authenticate user
+router.route('/login').post(controller.verifyUser, controller.login); // Login user
 
 /** GET Methods */
-router.route('/user/:username').get(controller.getUser) // user with username
-router.route('/generateOTP').get(controller.verifyUser, localVariables, controller.generateOTP) // generate random OTP
-router.route('/verifyOTP').get(controller.verifyUser, controller.verifyOTP) // verify generated OTP
-router.route('/createResetSession').get(controller.createResetSession) // reset all the variables
-
+router.route('/user/:username').get(controller.getUser); // Get user by username
+router.route('/generateOTP').get(controller.verifyUser, localVariables, controller.generateOTP); // Generate random OTP
+router.route('/verifyOTP').get(controller.verifyUser, controller.verifyOTP); // Verify generated OTP
+router.route('/createResetSession').get(controller.createResetSession); // Reset all the variables
 
 /** PUT Methods */
-router.route('/updateuser').put(Auth, controller.updateUser); // is use to update the user profile
-router.route('/resetPassword').put(controller.verifyUser, controller.resetPassword); // use to reset password
-
-
+router.route('/updateuser').put(Auth, controller.updateUser); // Update user profile
+router.route('/resetPassword').put(controller.verifyUser, async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await UserModel.updateOne({ username: username }, { password: hashedPassword });
+        req.app.locals.resetSession = false; // Reset session after password reset
+        return res.status(200).send({ msg: "Password Reset Successfully!" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ error: "Internal Server Error" });
+    }
+}); // Reset password
 
 export default router;
