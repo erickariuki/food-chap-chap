@@ -39,18 +39,18 @@ const followUnFollowUser = async () => {
     //         console.log ("Error in updateUser:", error.message);
     //     }
     // }
-    const getUserProfile = async (req, res) => {
-        const {username} = req.params;
-        try {
-            const user = await User.findOne({username}).select('password').select('updatedAt');
-            if (!user) return res.status(400).json({ message: "User not found"});
+    // const getUserProfile = async (req, res) => {
+    //     const {username} = req.params;
+    //     try {
+    //         const user = await User.findOne({username}).select('password').select('updatedAt');
+    //         if (!user) return res.status(400).json({ message: "User not found"});
 
-            res.status(200).json(user);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-            console.log ("Error in getUserProfile:", error.message);
-        }
-    }
+    //         res.status(200).json(user);
+    //     } catch (error) {
+    //         res.status(500).json({ message: error.message });
+    //         console.log ("Error in getUserProfile:", error.message);
+    //     }
+    // }
 }
 
-export { followUnFollowUser, getUserProfile };
+export { followUnFollowUser };

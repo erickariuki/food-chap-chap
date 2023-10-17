@@ -1,4 +1,4 @@
-import User from '../model/userModel.js'
+import User from '../model/User.model.js'
 import Post from '../model/postModel.js'
 
 const createPost = async (req, res) => {
