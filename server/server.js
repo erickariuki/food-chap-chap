@@ -3,7 +3,6 @@ import cors from 'cors';
 import express from 'express';
 import connect from './database/conn.js';
 import router from './router/routes.js';
-import cookieParser from "cookie-parser";
 import userRouter from './router/userRoutes.js';
 import postRouter from './router/postRoutes.js';
 
@@ -12,7 +11,6 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(cookieParser());
 app.use(cors());
 app.use(morgan("tiny"));
 app.disable("x-powered-by");
