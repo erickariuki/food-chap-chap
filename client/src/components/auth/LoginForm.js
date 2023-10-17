@@ -17,7 +17,7 @@ function LoginForm({ onLogin }) {
     
       function handleSubmit(e) {
         e.preventDefault();
-        fetch("/login", {
+        fetch("http://localhost:8080/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

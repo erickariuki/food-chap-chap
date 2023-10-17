@@ -33,66 +33,45 @@ export async function verifyUser(req, res, next){
   "profile": ""
 }
 */
-export async function register(req,res){
-
+export async function register(req, res) {
     try {
-        const { username, password, profile, email } = req.body;        
-
-        // check the existing user
-        const existUsername = new Promise((resolve, reject) => {
-            UserModel.findOne({ username }, function(err, user){
-                if(err) reject(new Error(err))
-                if(user) reject({ error : "Please use unique username"});
-
-                resolve();
-            })
-        });
-
-        // check for existing email
-        const existEmail = new Promise((resolve, reject) => {
-            UserModel.findOne({ email }, function(err, email){
-                if(err) reject(new Error(err))
-                if(email) reject({ error : "Please use unique Email"});
-
-                resolve();
-            })
-        });
-
-
-        Promise.all([existUsername, existEmail])
-            .then(() => {
-                if(password){
-                    bcrypt.hash(password, 10)
-                        .then( hashedPassword => {
-                            
-                            const user = new UserModel({
-                                username,
-                                password: hashedPassword,
-                                profile: profile || '',
-                                email
-                            });
-
-                            // return save result as a response
-                            user.save()
-                                .then(result => res.status(201).send({ msg: "User Register Successfully"}))
-                                .catch(error => res.status(500).send({error}))
-
-                        }).catch(error => {
-                            return res.status(500).send({
-                                error : "Enable to hashed password"
-                            })
-                        })
-                }
-            }).catch(error => {
-                return res.status(500).send({ error })
-            })
-
-
+      const { username, password, profile, email } = req.body;
+  
+      // Check for existing username
+      const usernameExists = await UserModel.findOne({ username });
+      if (usernameExists) {
+        return res.status(400).json({ error: "Please use a unique username" });
+      }
+  
+      // Check for existing email
+      const emailExists = await UserModel.findOne({ email });
+      if (emailExists) {
+        return res.status(400).json({ error: "Please use a unique email" });
+      }
+  
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const user = new UserModel({
+        username,
+        password: hashedPassword,
+        profile: profile || "",
+        email,
+      });
+  
+      // Save the user to the database
+      const result = await user.save();
+  
+      if (result) {
+        return res.status(201).json({ msg: "User registered successfully" });
+      } else {
+        return res.status(500).json({ error: "User registration failed" });
+      }
     } catch (error) {
-        return res.status(500).send(error);
+      return res.status(500).json({ error: "Unable to register user" });
     }
-
-}
+  }
+  
 
 
 /** POST: http://localhost:8080/api/login 
@@ -147,23 +126,23 @@ export async function getUser(req,res){
     const { username } = req.params;
 
     try {
-        
-        if(!username) return res.status(501).send({ error: "Invalid Username"});
-
-        UserModel.findOne({ username }, function(err, user){
-            if(err) return res.status(500).send({ err });
-            if(!user) return res.status(501).send({ error : "Couldn't Find the User"});
-
-            /** remove password from user */
-            // mongoose return unnecessary data with object so convert it into json
-            const { password, ...rest } = Object.assign({}, user.toJSON());
-
-            return res.status(201).send(rest);
-        })
-
+        if (!username) return res.status(501).send({ error: "Invalid Username" });
+    
+        const user = await UserModel.findOne({ username });
+    
+        if (!user) {
+            return res.status(404).send({ error: "User not found" });
+        }
+    
+        // Remove password from user
+        const { password, ...rest } = user.toJSON();
+    
+        return res.status(201).send(rest);
     } catch (error) {
-        return res.status(404).send({ error : "Cannot Find User Data"});
+        console.error("Error:", error);
+        return res.status(500).send({ error: "An error occurred" });
     }
+    
 
 }
 
@@ -178,32 +157,33 @@ body: {
     profile : ''
 }
 */
-export async function updateUser(req,res){
-    try {
-        
-        // const id = req.query.id;
-        const { userId } = req.user;
-
-        if(userId){
-            const body = req.body;
-
-            // update the data
-            UserModel.updateOne({ _id : userId }, body, function(err, data){
-                if(err) throw err;
-
-                return res.status(201).send({ msg : "Record Updated...!"});
-            })
-
-        }else{
-            return res.status(401).send({ error : "User Not Found...!"});
-        }
-
-    } catch (error) {
-        return res.status(401).send({ error });
-    }
-}
-
-
+// export async function updateUser(req, res) {
+//     try {
+//       const { userId } = req.user;
+  
+//       if (!userId) {
+//         return res.status(401).json({ error: "Authentication Failed" });
+//       }
+  
+//       const body = req.body;
+  
+//       // Check if the user has the necessary permissions to update the data (authorization logic).
+  
+//       // Update the data using promises with Mongoose
+//       const result = await UserModel.updateOne({ _id: userId }, body);
+  
+//       if (result.nModified === 0) {
+//         return res.status(404).json({ error: "No records updated" });
+//       }
+  
+//       return res.status(201).json({ msg: "Record Updated" });
+//     } catch (error) {
+//       console.error("Error:", error);
+//       return res.status(500).json({ error: "Internal Server Error" });
+//     }
+//   }
+  
+  
 /** GET: http://localhost:8080/api/generateOTP */
 export async function generateOTP(req,res){
     req.app.locals.OTP = await otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false})
