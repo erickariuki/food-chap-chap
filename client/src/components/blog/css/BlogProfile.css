@@ -1,0 +1,26 @@
+/* BlogProfile.css */
+
+.user-profile-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .user-profile-heading {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .user-profile-details {
+    font-size: 16px;
+  }
+  
+  .profile-label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  /* Add your additional styling as needed */
+  

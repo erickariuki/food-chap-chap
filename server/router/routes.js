@@ -1,5 +1,7 @@
 import { Router } from "express";
 const router = Router();
+import passport from "passport";
+
 
 /** import all controllers */
 import * as controller from '../controllers/appController.js';
@@ -13,7 +15,23 @@ router.route('/register').post(controller.register); // register user
 router.route('/registerMail').post(registerMail); // send the email
 router.route('/authenticate').post(controller.verifyUser, (req, res) => res.end()); // authenticate user
 router.route('/login').post(controller.verifyUser,controller.login); // login in app
+//google Authentication with Passport.js
 
+router.route(
+    '/auth/google',
+    passport.authenticate('google', {
+      scope: ['profile', 'email'], // Define the scope based on your requirements
+    })
+  );
+  
+router.route(
+    '/auth/google/redirect',
+    passport.authenticate('google', {
+      successRedirect: '/', // Redirect to your app's dashboard on successful authentication
+      failureRedirect: '/login', // Redirect to a login page on authentication failure
+    })
+  );
+  
 /** GET Methods */
 router.route('/user/:username').get(controller.getUser) // user with username
 router.route('/generateOTP').get(controller.verifyUser, localVariables, controller.generateOTP) // generate random OTP

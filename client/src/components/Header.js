@@ -41,7 +41,7 @@ function Header({user, onLogout}) {
 									Restaurants
                                                         </NavLink></li>
 
-									<li><a href="#">Blogs</a>
+									<li><a href="/blogs">Blogs</a>
 									</li>
 									
 								</ul>
@@ -62,7 +62,7 @@ function Header({user, onLogout}) {
 						<div className="main-nav">
 							<nav className="main-navigation">
 								<ul className="fancy-right-menu">
-									<li><a href="#">Contact Us</a>
+									<li><a href="/contactus">Contact Us</a>
 									</li>
 
 

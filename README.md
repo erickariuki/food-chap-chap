@@ -80,3 +80,14 @@ add this
                 *.user
                 *.sln
                 *.swp
+## passport.js installations
+
+npm install passport-google-oauth2
+
+
+## for the front end client 
+
+install this
+    npm install @emailjs/browser
+    npm install react-google-recaptcha
+    npm install react-type-animation sweetalert2 react-quill
