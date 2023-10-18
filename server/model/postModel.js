@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
     },
     text: {
         type: String,
-        maxLength: 500
+        required: true
     },
     image: {
         type: String
