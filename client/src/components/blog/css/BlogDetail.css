@@ -1,0 +1,59 @@
+/* BlogDetail.css */
+
+/* Container for the entire blog content */
+.blog-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Blog title style */
+  .blog-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Blog content style */
+  .blog-content {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  /* Author and category details */
+  .blog-details {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  /* Back button style (if needed) */
+  .back-button {
+    margin-top: 20px;
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .back-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* You can add more styles and customize as needed */
+  
+  /* BlogDetail.css */
+
+/* ...previous styles... */
+
+/* Style for the blog image */
+.blog-image {
+    max-width: 100%; /* Ensure the image doesn't overflow its container */
+    height: auto; /* Maintain aspect ratio */
+    margin-top: 20px; /* Add spacing between content and image */
+  }
+  
+  /* You can adjust the styling as needed for your design */
+  
