@@ -1,15 +1,12 @@
-import express from 'express';
-import { followUnFollowUser } from '../controllers/userController.js';
-import Auth from '../middleware/auth.js';
+import express from "express";
+const router = express.Router();
+import Auth from "../middleware/auth.js";
+import { getUser, followUser, unfollowUser, updateProfilePic, searchUsers }from "../controllers/userController.js";
 
-const UserRouter = express.Router();
+router.get("/user/:id", Auth, getUser);
+router.put("/follow", Auth, followUser);
+router.put("/unfollow", Auth, unfollowUser);
+router.put("/updatepic", Auth, updateProfilePic);
+router.post("/search-users", Auth, searchUsers);
 
-UserRouter.use(Auth); // Applying authentication middleware to all routes below
-
-// POST route to follow/unfollow a user
-UserRouter.post('/follow/:id', followUnFollowUser);
-
-// PUT route to update user profile
-// UserRouter.put('/update', updateUser);
-
-export default UserRouter;
+export default router;

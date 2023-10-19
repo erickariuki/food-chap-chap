@@ -1,145 +1,133 @@
-import User from '../model/User.model.js'
-import Post from '../model/postModel.js'
+import Post from "../model/postModel.js";
 
-const createPost = async (req, res) => {
-    try {
-        let { text, image } = req.body;
-        let postedBy = req.user.id; // Assuming req.user.id contains the ID of the authenticated user
-
-        let newPost = new Post({
-            postedBy,
-            text,
-            image
+export async function getAllPosts (req, res) {
+    Post.find()
+        .populate("postedBy", "_id name")
+        .populate("comments.postedBy", "_id name")
+        .sort("-createdAt")
+        .then(posts => {
+            res.json({ posts });
+        })
+        .catch(err => {
+            console.log(err);
         });
-
-        const post = await newPost.save();
-        res.status(200).json(post);
-    } catch (error) {
-        console.error(error); // Log the error to the console for debugging
-        return res.status(500).json("Internal error occurred");
-    }
 };
 
-const getPost = async (req, res) => {
-    try {
-        const post = await Post.findById(req.params._id)
-
-        if(!post){
-            return res.status(404).json ({ message: "Post not found "});
-        }
-
-        res.status(200).json({ post });
-    } catch (error) {
-        res.status(500).json({ message: error.message});
+export async function getSubscribedPosts (req, res) {
+    Post.find({ postedBy: { $in: req.user.following } })
+        .populate("postedBy", "_id name")
+        .populate("comments.postedBy", "_id name")
+        .sort("-createdAt")
+        .then(posts => {
+            res.json({ posts });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+export async function createPost (req, res) {
+    const { title, body, pic } = req.body;
+    if (!title || !body || !pic) {
+        return res.status(422).json({ error: "Please add all the fields" });
     }
+
+    // Set the postedBy field based on the authenticated user
+    req.body.postedBy = req.user._id;
+
+    const post = new Post({
+        title,
+        text: body,
+        image: pic,
+        postedBy: req.body.postedBy
+    });
+
+    post.save()
+        .then(result => {
+            res.json({ post: result });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: "Internal Server Error" });
+        });
 };
 
 
-const deletePost = async (req, res) => {
-    try {
-        const post = await Post.findById(req.params._id);
-        if (!post){
-            return res.status(404).json ({ message: "Post not found "});
-        }
+export async function getMyPosts (req, res) {
+    Post.find({ postedBy: req.user._id })
+        .populate("postedBy", "_id name")
+        .then(mypost => {
+            res.json({ mypost });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
 
-        if(post.postedBy.toString()!== req.user._id.toString()) {
-            return res.status(401).json({ error: "Unauthorized to delete post"});
-        }
-
-        await Post.findByIdAndDelete(req.params._id);
-         res.status(200).json({ message: "Post deleted successully" });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}; 
-
-const likeUnlikePost = async (req, res) => {
-    try {
-        const {id:postId} = req.params;
-        const userId = req.user._id;
-
-        const post = await Post.findById(postId);
-
-        if(!post) {
-            return res.status(404).json ({ message: "Post not found "});
-        }
-
-        const userLikedPost = post.likes.includes(userId);
-        if(userLikedPost) {
-            //unlike post
-            await Post.updateOne({_id:postId}, {$pull: {likes: userId}});
-            res.status(200).json({ message: "Post unliked successfully" });
+export async function likePost (req, res) {
+    Post.findByIdAndUpdate(req.body.postId, {
+        $push: { likes: req.user._id }
+    }, {
+        new: true
+    }).exec((err, result) => {
+        if (err) {
+            return res.status(422).json({ error: err });
         } else {
-            // like post
-            post.likes.push(userId);
-            await post.save();
-            res.status(200).json({ message: "Post liked successfully"});
+            res.json(result);
         }
-    } catch (error) {
-        res.status(500).json({ error: err.message });  
-    }
-    
-}
+    });
+};
 
-const replyToPost = async (req, res) => {
-    try {
-        const {text} = req.body;
-        const postId = req.params._id;
-        const userProfilePic = req.user.userProfilePic
-        const username = req.user.username
-
-        if(!text) {
-            return res.status(400).json({ message: "Text field is required"});
+export async function unlikePost (req, res) {
+    Post.findByIdAndUpdate(req.body.postId, {
+        $pull: { likes: req.user._id }
+    }, {
+        new: true
+    }).exec((err, result) => {
+        if (err) {
+            return res.status(422).json({ error: err });
+        } else {
+            res.json(result);
         }
+    });
+};
 
-        const post = await Post.findById(postId);
-        if(!post) {
-            return res.status(400).json({ message: "Post not found"});
-        }
+export async function commentOnPost (req, res) {
+    const comment = {
+        userId: req.user._id,
+        text: req.body.text,
+        userProfilePic: req.user.profilePic,
+        username: req.user.username
+    };
+    Post.findByIdAndUpdate(req.body.postId, {
+        $push: { replies: comment }
+    }, {
+        new: true
+    })
+        .populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name")
+        .exec((err, result) => {
+            if (err) {
+                return res.status(422).json({ error: err });
+            } else {
+                res.json(result);
+            }
+        });
+};
 
-        const reply = {userId, text, userProfilePic, username}
-
-        post.replies.push(reply);
-        await post.save();
-
-        res.status(200).json({ message: "Reply sent successfully", post });
-    } catch (error) {
-        res.status(500).json({message: error.messsage});
-    }
-}
-
-const getFeedPosts = async (req,res) => {
-    try {
-        const userId = req.user._id;
-        const user = await User.findById(userId);
-        if(!user) {
-            return res.status(404).json ({ message: "User not found "});
-        }
-
-        const following = user.following;
-
-		const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({ createdAt: -1 });
-
-		res.status(200).json(feedPosts);
-    } catch (error) {
-       res.staus(500).json({ message: error.message }); 
-    }
-}
-
-const getUserPosts = async (req, res) => {
-    const {username} = req.params;
-    try {
-        const user = await User.findOne({ username });
-        if(!user) {
-            return res.status(404).json({ error: 'User not found'});
-        }
-
-        const posts = await Post.find({ postedBy: user._id}).sort({ createdAt: -1 });
-
-        res.status(200).json(posts);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-}
-
-export { createPost, getPost, deletePost, likeUnlikePost, getFeedPosts};
+export async function deletePost (req, res) {
+    Post.findOne({ _id: req.params.postId })
+        .populate("postedBy", "_id")
+        .exec((err, post) => {
+            if (err || !post) {
+                return res.status(422).json({ error: err });
+            }
+            if (post.postedBy._id.toString() === req.user._id.toString()) {
+                post.remove()
+                    .then(result => {
+                        res.json(result);
+                    }).catch(err => {
+                        console.log(err);
+                    });
+            }
+        });
+};

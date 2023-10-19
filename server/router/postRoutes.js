@@ -1,15 +1,15 @@
-// Import required modules and controllers
-import express from 'express';
-import { createPost, getPost, deletePost, likeUnlikePost, getFeedPosts } from '../controllers/postControllers.js';
-import Auth from '../middleware/auth.js';
+import express from "express";
+const router = express.Router();
+import Auth from "../middleware/auth.js";
+import { getAllPosts, getSubscribedPosts, createPost, getMyPosts, likePost, unlikePost, commentOnPost, deletePost } from "../controllers/postControllers.js";
 
-const postRouter = express.Router();
+router.get("/allpost", Auth, getAllPosts);
+router.get("/getsubpost", Auth, getSubscribedPosts);
+router.post("/createpost", Auth, createPost);
+router.get("/mypost", Auth, getMyPosts);
+router.put("/like", Auth, likePost);
+router.put("/unlike", Auth, unlikePost);
+router.put("/comment", Auth, commentOnPost);
+router.delete("/deletepost/:postId", Auth, deletePost);
 
-// Routes with authentication middleware
-postRouter.post('/create', Auth, createPost); // Create a new post
-postRouter.get('/:postId', Auth, getPost); // Get a specific post
-postRouter.delete('/:postId', Auth, deletePost); // Delete a post
-postRouter.post('/like/:postId', Auth, likeUnlikePost); // Like/unlike a post
-postRouter.get('/feed', Auth, getFeedPosts); // Get posts from users followed by the current user
-
-export default postRouter;
+export default router;
