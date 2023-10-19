@@ -1,12 +1,13 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "this is the backend of this application, it is the the restaurant API",
   "type": "module",
   "scripts": {
     "start": "nodemon server.js"
   },
+
+
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -31,3 +32,4 @@
     "passport-google-oauth20": "^2.0.0"
   }
 }
+
