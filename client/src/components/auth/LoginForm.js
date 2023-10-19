@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-
+import { Link } from "react-router-dom"
 function LoginForm({ onLogin }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -17,7 +17,7 @@ function LoginForm({ onLogin }) {
     
       function handleSubmit(e) {
         e.preventDefault();
-        fetch("/login", {
+        fetch("http://localhost:8080/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -101,7 +101,11 @@ function LoginForm({ onLogin }) {
 										<div className="input-filed input-field-btn">
 											<div className="ajax-login-button input-button-loader">
 												<input type="submit" className="cs-bgcolor" value="Log in"/>
-											</div>
+                        											
+                      </div>
+                      <div class="text-center my-4">
+                        <Link  className="block px-4 py-2  bg-blue-500 text-white rounded hover:bg-blue-700" to="/auth/google">Login with Google</Link>
+                      </div>
 										</div>
 									</form>
 								</div>
