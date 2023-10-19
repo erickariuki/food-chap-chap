@@ -6,6 +6,10 @@ export const UserSchema = new mongoose.Schema({
         required : [true, "Please provide unique Username"],
         unique: [true, "Username Exist"]
     },
+    googleId:{
+        type: String
+        
+    },
     password: {
         type: String,
         required: [true, "Please provide a password"],
