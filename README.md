@@ -7,7 +7,7 @@ openssl rand -base64 32
 create Ethereal Email : https://ethereal.email/create
 
 # Add Node Node Modules By:
-npm install nodemon morgan otp-generator mongodb jsonwebtoken bcrypt nodemailer
+npm install nodemon morgan otp-generator mongodb jsonwebtoken bcrypt nodemailer cors
 
 # Use this as MongoDB URL (Ask Philip for Invite if You Dont Have Access)
 ATLAS_URI: "mongodb+srv://fudchapchap2:$Philip2004$@users.nucnmse.mongodb.net/?retryWrites=true&w=majority" 
