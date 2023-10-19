@@ -12,6 +12,13 @@ import pkg from 'passport';
 
 // Create an Express application
 
+// import mongoDBURL from './config.js';
+
+import userRouter from './router/userRoutes.js';
+import postRouter from './router/postRoutes.js';
+import blogRouter from './router/blogRoutes.js';
+
+
 const app = express();
 
 // Middleware for handling CORS
@@ -26,12 +33,14 @@ app.use(
 // Middleware to parse JSON in request bodies
 app.use(express.json());
 app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 app.use(cors());
 app.use(morgan("tiny"));
 app.disable("x-powered-by");
 app.set('view engine', 'ejs');
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 
 
@@ -52,7 +61,10 @@ app.use('/menus', menuRoutes);
 app.use('/orders', orderRoutes);
 
 // API ROUTES
-app.use("/api", router)
+app.use("/api", router);
+app.use("/api/users", userRouter)
+app.use('/api/posts', postRouter),
+app.use('/api/blogs', blogRouter)
 
 app.get("/", (req, res) => {
     res.render("/http://localhost:4000")
