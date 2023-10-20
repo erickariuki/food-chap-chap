@@ -1,46 +1,40 @@
 import mongoose from 'mongoose';
+const { Schema, ObjectId } = mongoose;
 
-const userSchema = mongoose.Schema({
-    postedBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-       
-    },    
+const commentSchema = new Schema({
     text: {
         type: String,
         required: true
     },
-    image: {
-        type: String
-    },
-    likes: {
-        // array of user ids
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'User',
-        default: [],
-    },
-    replies: [
-        {
-            userId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'User',
-                required: true
-            },
-            text: {
-                type: String
-            },
-            userProfilePic: {
-                type: String
-            },
-            username: {
-                type: String
-            }
-        }
-    ]
-}, {
-    timestamps: true
-})
+    postedBy: {
+        type: ObjectId,
+        ref: 'User'
+    }
+});
 
-const Post = mongoose.model('Post', userSchema);
+const postSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    body: {
+        type: String,
+        
+    },
+    photo: {
+        type: String,
+    },
+    likes: [{
+        type: ObjectId,
+        ref: 'User'
+    }],
+    comments: [commentSchema], // Use the commentSchema as a subdocument
+    postedBy: {
+        type: ObjectId,
+        ref: 'User'
+    }
+}, { timestamps: true });
+
+const Post = mongoose.model('Post', postSchema);
 
 export default Post;
