@@ -18,7 +18,7 @@ import RegisterForm from './components/auth/RegisterForm'
 
 import Restaurantdash from './components/Restaurantdash'
 
-import BlogProfile from './components/blog/BlogProfile';
+// import BlogProfile from './components/blog/BlogProfile';
 import { useEffect, useState } from 'react';
 import Customer from './components/Customer';
  import LoyaltyPoints from './components/LoyaltyPoints';
@@ -44,11 +44,11 @@ import AdminSettlements from './components/AdminSettlements';
 import AdminBookings from './components/AdminBookings';
 import AdminPassword from './components/AdminPassword';
 import AdminRestaurants from './components/AdminRestaurants';
-import BlogPage from './components/blog/BlogPage';
-import CreateBlog from './components/blog/CreateBlog';
+// import BlogPage from './components/blog/BlogPage';
+// import CreateBlog from './components/blog/CreateBlog';
 import ContactMe from './components/ContactUs';
-import UserProfile from './components/UserProfile';
-import BlogDetail from './components/blog/BlogDetail';
+// import UserProfile from './components/UserProfile';
+// import BlogDetail from './components/blog/BlogDetail';
 
 function App() {
   const [foods, setFoods] = useState([]);
@@ -182,12 +182,12 @@ function App() {
 <Route path="/admindash/bookings" element={<AdminBookings />} />
 <Route path="/admindash/password/termsandconditions" element={<AdminPassword />} />
 <Route path="/admindash/restaurants" element={<AdminRestaurants/>} />
-<Route path="/blogs/createblog" element={<CreateBlog/>} />
+{/* <Route path="/blogs/createblog" element={<CreateBlog/>} />
 <Route path="/blogs" element={<BlogPage blogs={blogs}  />} />
 
  <Route path="/blogprofile/:id" element={<BlogProfile users={users} />} />
 
-<Route path="/blog/fullcontent/:id" element={<BlogDetail blogs={blogs}  />} />
+<Route path="/blog/fullcontent/:id" element={<BlogDetail blogs={blogs}  />} /> */}
 <Route path="/contactus" element={<ContactMe />} />
 <Route path="/restaurantdash" element={<Restaurantdash />} />
 <Route path="/restaurantdash/profile" element={<RestaurantProfile/>} />
@@ -201,7 +201,7 @@ function App() {
 
 <Route path="/restaurants/:id" element={<RestaurantsMenu restaurants= {restaurants} foods={foods} username={user} updateCart={handleUpdateCart}/>} />
 <Route path="/restaurants" element={<Restaurants restaurants= {restaurants} />}/>
-<Route path="/me" element={<UserProfile />} />
+{/* <Route path="/me" element={<UserProfile />} /> */}
 </Routes>
 <Footer />
 	</div>
