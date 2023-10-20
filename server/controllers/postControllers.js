@@ -67,7 +67,7 @@ export async function likePost(req, res) {
             { $push: { likes: req.user._id } },
             { new: true }
         );
-        res.json(result);
+        res.status(200).json({ result: "Liked Successfully" });
     } catch (error) {
         console.error(error);
         res.status(422).json({ error: "Invalid request" });
@@ -81,7 +81,7 @@ export async function unlikePost(req, res) {
             { $pull: { likes: req.user._id } },
             { new: true }
         );
-        res.json(result);
+        res.status(200).json({ result: "Unliked Successfully" });
     } catch (error) {
         console.error(error);
         res.status(422).json({ error: "Invalid request" });
@@ -124,21 +124,31 @@ export async function commentOnPost(req, res) {
     }
   }
 
-export async function deletePost(req, res) {
+
+  export async function deletePost(req, res) {
     try {
-        const post = await Post.findOne({ _id: req.params.postId })
-            .populate("postedBy", "_id");
+        const postId = req.params.postId;
+        const post = await Post.findOne({ _id: postId }).populate("postedBy", "_id");
+        
         if (!post) {
-            return res.status(422).json({ error: "Post not found" });
+            return res.status(404).json({ error: "Post not found" });
         }
+
+        // Ensure the post has a valid 'postedBy' field before comparing IDs
+        if (!post.postedBy || !post.postedBy._id) {
+            return res.status(500).json({ error: "Invalid post data" });
+        }
+
+        // Check if the current user is the creator of the post
         if (post.postedBy._id.toString() === req.user._id.toString()) {
             await post.remove();
-            res.json(post);
+            return res.status(200).json({ message: "Post deleted successfully" });
         } else {
-            res.status(401).json({ error: "Unauthorized request" });
+            return res.status(401).json({ error: "Unauthorized request" });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 }
+  
