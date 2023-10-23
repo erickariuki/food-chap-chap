@@ -1,13 +1,18 @@
-export const uploadImage = (req, res, next) => {
-    upload.single('image')(req, res, function (err) {
-      if (err instanceof multer.MulterError) {
-        // A Multer error occurred when uploading.
-        res.status(422).json({ error: "File upload error" });
-      } else if (err) {
-        // An unknown error occurred when uploading.
-        res.status(500).json({ error: "Internal Server Error" });
-      }
-      // Everything is fine, move on to the next middleware or route handler.
-      next();
-    });
-};
+import multer from 'multer';
+
+// Multer storage configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // Specify the destination folder where uploaded files will be stored
+    cb(null, 'uploads/'); // You might need to create the 'uploads' folder in your project
+  },
+  filename: function (req, file, cb) {
+    // Define the file name for the uploaded file
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+// Multer upload instance
+const upload = multer({ storage: storage }).single('image'); // 'image' should match the field name in your form data
+
+export { upload };

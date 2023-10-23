@@ -1,6 +1,7 @@
 import User from "../model/User.model.js";
 import Post from "../model/postModel.js";
 
+
 export async function getUser (req, res) {
     User.findOne({ _id: req.params.id })
         .select("-password")
