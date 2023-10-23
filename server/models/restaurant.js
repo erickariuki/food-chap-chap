@@ -24,6 +24,7 @@ const restaurantSchema = new Schema({
         required: true,
     },
     ratings: [Number],
+
 }, {
     timestamps: true,
 });

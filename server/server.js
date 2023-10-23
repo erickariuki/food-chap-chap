@@ -22,13 +22,18 @@ app.use(express.json());
 
 // Connect to MongoDB
 mongoose
-    .connect(mongoDBURL, { useUnifiedTopology: true, useNewUrlParser: true })
+    .connect(mongoDBURL, {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+        // other options...
+    })
     .then(() => {
         console.log('Connected to MongoDB');
     })
     .catch((error) => {
         console.error('Failed to connect to MongoDB:', error);
     });
+
 
 // Basic route for the root URL
 app.get('/', (req, res) => {
@@ -37,7 +42,7 @@ app.get('/', (req, res) => {
 
 // Define your routes
 app.use('/restaurants', restaurantRoutes);
-app.use('/menus', menuRoutes);
+app.use('/menus', menuRoutes);  
 app.use('/orders', orderRoutes);
 
 // Start the Express server

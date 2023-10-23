@@ -6,6 +6,7 @@ const router = express.Router();
 // GET all orders
 router.get('/', async (req, res) => {
     try {
+        
         const orders = await Order.find();
         res.json(orders);
     } catch (error) {
