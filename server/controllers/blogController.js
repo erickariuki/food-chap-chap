@@ -1,5 +1,5 @@
 // blog controller
-import Blog from '../models/blogModel';
+import { Blog } from '../model/blogModel.js';
 
 // CRUD opertions for Blog Model
 

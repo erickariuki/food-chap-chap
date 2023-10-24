@@ -7,11 +7,11 @@ const blogSchema = new mangoose.Schema({
     },
     content: {
         type: String,
-        required: false,
+        required: true,
     },
     image: {
         type: Buffer,
-        required: false,
+        required: true,
     },
     author: {
         type: String,
@@ -25,8 +25,8 @@ const blogSchema = new mangoose.Schema({
         type: Number,
         required: false,
     },
-    comments: [commentSchema],
-    replies: [replySchema],
+    // comments: [commentSchema],
+    // replies: [replySchema],
 });
 
 export const Blog = mangoose.model("Blog", blogSchema);
