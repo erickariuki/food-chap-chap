@@ -1,0 +1,12 @@
+.blog-button{
+    width: fit-content;
+    height: 50px;
+    color: white!important;
+    background-color: blue;
+    border-color: none;
+    padding: 5px;
+    border-radius: 5px;
+}
+.blog-button:hover {
+    background-color: rgb(77, 77, 243);
+}

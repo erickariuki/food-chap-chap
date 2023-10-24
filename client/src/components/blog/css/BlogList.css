@@ -1,0 +1,125 @@
+/* BlogList.css */
+
+/* Header style */
+.header {
+  text-align: center;
+  font-size: 24px;
+  margin: 20px 0;
+}
+
+/* Container for blog cards */
+.blogs-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 20px;
+}
+
+/* Individual blog card style */
+.blog-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: calc(33.33% - 20px); /* Responsive layout for three columns on larger screens */
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+/* Blog title style */
+.blog-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Blog content style */
+.blog-content {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+/* "See More" button style */
+.see-more-button {
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  /* padding: 10px 20px; */
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  width: max-content;
+  margin-bottom: 10px; /* Add margin to separate from the category button */
+}
+
+/* Blog category button style */
+.blog-button-category {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin-left: 30px;
+  color: #f4a8a8;
+  border: none;
+  padding: 5px 10px;
+  font-size: 12px;
+  margin-top: 10px;
+}
+.blog-button-category:hover{
+  background-color: #b4cfec;
+  color: white;
+}
+
+/* Blog image style */
+.blog-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
+
+/* Blog info section */
+.blog-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Thumbs up icon style */
+.thumbs-up-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+
+/* User profile section */
+.user-profile {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* User profile pic style */
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* User profile info style */
+.user-profile-info {
+  font-size: 14px;
+}
+
+/* Responsive layout for smaller screens */
+@media screen and (max-width: 768px) {
+  .blogs-card-container {
+    flex-direction: column;
+  }
+  .blog-card {
+    width: 100%; /* Full width on smaller screens */
+  }
+}
+
+
