@@ -2,10 +2,12 @@ import express from "express";
 const router = express.Router();
 import Auth from "../middleware/auth.js";
 import { getAllPosts, getSubscribedPosts, createPost, getMyPosts, likePost, unlikePost, commentOnPost, deletePost } from "../controllers/postControllers.js";
+import { upload } from '../middleware/upload.js';
+
 
 router.get("/allpost", Auth, getAllPosts);
 router.get("/getsubpost", Auth, getSubscribedPosts);
-router.post("/createpost", Auth, createPost);
+router.post('/createpost', Auth, upload, createPost);
 router.get("/mypost", Auth, getMyPosts);
 router.put("/like", Auth, likePost);
 router.put("/unlike", Auth, unlikePost);

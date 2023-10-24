@@ -1,5 +1,22 @@
 import Post from "../model/postModel.js";
-
+import multer from 'multer';
+    
+// Check File Type
+function checkFileType(file, cb){
+    // Allowed ext
+    const filetypes = /jpeg|jpg|png|gif/;
+    // Check ext
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    // Check mime
+    const mimetype = filetypes.test(file.mimetype);
+  
+    if(mimetype && extname){
+      return cb(null,true);
+    } else {
+      cb('Error: Images Only!');
+    }
+}
+  
 export async function getAllPosts(req, res) {
     try {
         const posts = await Post.find()
@@ -27,25 +44,27 @@ export async function getSubscribedPosts(req, res) {
 }
 
 export async function createPost(req, res) {
-    const { title, body, pic } = req.body;
-    if (!title || !body || !pic) {
-        return res.status(422).json({ error: "Please add all the fields" });
+    const { title, body } = req.body;
+  
+    // Check if an image file is uploaded
+    if (!req.file) {
+      return res.status(422).json({ error: "Please upload an image" });
     }
-
+  
     // Set the postedBy field based on the authenticated user
     req.body.postedBy = req.user._id;
-
+  
     try {
-        const post = await Post.create({
-            title,
-            text: body,
-            image: pic,
-            postedBy: req.body.postedBy
-        });
-        res.json({ post });
+      const post = await Post.create({
+        title,
+        text: body,
+        image: req.file.path,  // Save the file path in the database
+        postedBy: req.body.postedBy
+      });
+      res.json({ post });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
 }
 

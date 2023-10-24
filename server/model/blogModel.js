@@ -11,7 +11,7 @@ const blogSchema = new mangoose.Schema({
     },
     image: {
         type: Buffer,
-        required: true,
+        required: false,
     },
     author: {
         type: String,
@@ -19,10 +19,12 @@ const blogSchema = new mangoose.Schema({
     },
     likes: {
         type: Number,
+        defaultValue: 0,
         required: false,
     },
     dislikes: {
         type: Number,
+        defaultValue: 0,
         required: false,
     },
     // comments: [commentSchema],

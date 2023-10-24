@@ -1,23 +1,36 @@
 import User from "../model/User.model.js";
 import Post from "../model/postModel.js";
 
+
 export async function getUser (req, res) {
-    User.findOne({ _id: req.params.id })
-        .select("-password")
-        .then(user => {
-            Post.find({ postedBy: req.params.id })
-                .populate("postedBy", "_id name")
-                .exec((err, posts) => {
-                    if (err) {
-                        return res.status(422).json({ error: err });
-                    }
-                    res.json({ user, posts });
-                });
-        })
-        .catch(err => {
-            return res.status(404).json({ error: "User not found" });
-        });
-};
+    try {
+      const user = await User.findById(req.params.id);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.status(200).json(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  
+export async function updateUserById (req, res) {
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
 
 export async function followUser (req, res) {
     try {

@@ -1,7 +1,12 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  // other configuration options...
+  optimizeDeps: {
+    include: ['react', 'react-dom'], // Add any other dependencies you want to include here.
+  },
+  // Add a rule to handle .js files as JSX
+  esbuild: {
+    jsxInject: `import React from 'react'`, // Ensure React is in scope for JSX parsing
+  },
+});
