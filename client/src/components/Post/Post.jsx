@@ -1,30 +1,29 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import { Link, useLocation, useParams } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import formatDistance from "date-fns/formatDistance";
 
 const Post = ({ post, setData }) => {
-  const { currentUser } = useSelector((state) => state.user);
+  const [currentUser, setCurrentUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const location = useLocation().pathname;
   const { id } = useParams();
   const dateStr = formatDistance(new Date(post.createdAt), new Date());
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCurrentUser = async () => {
       try {
-        const response = await axios.get(`/api/users/${post.userId}`);
-        setUserData(response.data);
-      } catch (err) {
-        console.error("Error fetching user data:", err);
+        const response = await axios.get(`/api/users/${userId}`);
+        setCurrentUser(response.data);
+      } catch (error) {
+        console.error("Error fetching current user:", error);
       }
     };
 
-    fetchData();
-  }, [post.userId]);
+    fetchCurrentUser();
+  }, []);
 
   const handleLike = async () => {
     try {
@@ -43,7 +42,7 @@ const Post = ({ post, setData }) => {
         setData(response.data.posts);
       }
     } catch (error) {
-      console.error("Error liking tweet:", error);
+      console.error("Error liking post:", error);
     }
   };
 
@@ -75,3 +74,4 @@ const Post = ({ post, setData }) => {
 };
 
 export default Post;
+

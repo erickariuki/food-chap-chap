@@ -11,7 +11,7 @@ import Profile from "./pages/Profile/Profile";
 const Layout = () => {
   return (
     <div className="md:w-8/12 mx-auto">
-      <Navbar />
+      {/* <Navbar /> */}
       <Outlet></Outlet>
     </div>
   );

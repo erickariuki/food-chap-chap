@@ -1,11 +1,12 @@
-import { useState } from "react";
-import TimelineTweet from "../TimelineTweet/TimelineTweet";
-import { useSelector } from "react-redux";
+import { useState } from 'react';
 import axios from "axios";
+// import TimelineTweet from "../TimelineTweet/TimelineTweet";
 
 const CreatePost = () => {
   const [postText, setPostText] = useState("");
-  const { currentUser } = useSelector((state) => state.user);
+  const [currentUser, setCurrentUser] = useState(/* Initial user state */);
+
+  // You can set the currentUser state using a useEffect or any other method you prefer
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,18 +17,18 @@ const CreatePost = () => {
         return;
       }
 
-      // Create a new tweet
+      // Create a new post
       const response = await axios.post("/api/posts/createpost", {
         userId: currentUser._id,
         text: postText,
       });
 
-      // Handle successful tweet creation (you can update UI accordingly)
-      console.log("Tweet created successfully:", response.data);
-      // Reload tweets or update state to refresh the timeline
+      // Handle successful post creation (you can update UI accordingly)
+      console.log("Post created successfully:", response.data);
+      // Reload posts or update state to refresh the timeline
     } catch (err) {
       // Handle errors (e.g., display error message to the user)
-      console.error("Error creating tweet:", err);
+      console.error("Error creating post:", err);
     }
   };
 
@@ -52,9 +53,10 @@ const CreatePost = () => {
           Post
         </button>
       </form>
-      <TimelineTweet />
+      {/* <TimelineTweet /> */}
     </div>
   );
 };
 
 export default CreatePost;
+

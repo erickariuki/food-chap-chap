@@ -2,19 +2,16 @@ import { useState, useEffect } from "react";
 import LeftSidebar from "../../components/LeftSidebar/LeftSidebar";
 import EditProfile from "../../components/EditProfile/EditProfile";
 import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import Post from "../../components/Post/Post";
-import { following } from "../../redux/userSlice";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user); // Use your user state management logic here
   const [userPosts, setUserPosts] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
 
   const { id } = useParams();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +20,7 @@ const Profile = () => {
         const userPostsResponse = await axios.get(`/api/posts/user/${id}`);
 
         setUserProfile(userProfileResponse.data);
-        setUserTweets(userPostsResponse.data.posts);
+        setUserPosts(userPostsResponse.data.posts);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -35,9 +32,8 @@ const Profile = () => {
   const handleFollow = async () => {
     try {
       const response = await axios.post(`/api/users/${id}/follow`, {
-        userId: currentUser._id,
+        userId: currentUser._id, // Replace with the appropriate logic to get the current user's ID
       });
-      dispatch(following(id)); // You need to implement this action in Redux
     } catch (err) {
       console.error("Error following/unfollowing user:", err);
     }
@@ -61,7 +57,7 @@ const Profile = () => {
                 className="px-4 py-2 bg-blue-500 rounded-full text-white"
                 onClick={handleFollow}
               >
-                {currentUser.following.includes(id) ? "Following" : "Follow"}
+                {/* Replace with your follow/unfollow logic */}
               </button>
             )}
           </div>
@@ -80,3 +76,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
