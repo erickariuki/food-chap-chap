@@ -1,19 +1,22 @@
 import Post from "../model/postModel.js";
 import multer from 'multer';
-
-// Set storage engine
-const storage = multer.diskStorage({
-    destination: './uploads/',  // Set the destination folder for uploaded files
-    filename: function (req, file, cb) {
-      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
+    
+// Check File Type
+function checkFileType(file, cb){
+    // Allowed ext
+    const filetypes = /jpeg|jpg|png|gif/;
+    // Check ext
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    // Check mime
+    const mimetype = filetypes.test(file.mimetype);
   
-  // Initialize multer middleware
-  const upload = multer({
-    storage: storage,
-    limits: { fileSize: 1024 * 1024 * 5 },  // Limit file size to 5MB (adjust as needed)
-});
+    if(mimetype && extname){
+      return cb(null,true);
+    } else {
+      cb('Error: Images Only!');
+    }
+}
+  
 export async function getAllPosts(req, res) {
     try {
         const posts = await Post.find()

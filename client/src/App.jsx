@@ -1,31 +1,58 @@
-// import { useState } from 'react'
-import './App.css'
-import { Layout } from 'antd';
-import Logo from './components/Logo';
-import MenuList from './components/MenuList';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+
+import "./App.css";
+import Home from "./pages/Home/Home";
+import Profile from "./pages/Profile/Profile";
+// import Explore from "./pages/Explore/Explore";
+// import Signin from "./pages/Signin/Signin";
+// import Navbar from "./components/Navbar/Navbar";
+// import Error from "./pages/Error/Error";
+
+const Layout = () => {
+  return (
+    <div className="md:w-8/12 mx-auto">
+      <Navbar />
+      <Outlet></Outlet>
+    </div>
+  );
+};
+
+const router = createBrowserRouter([
+  {
+    // path: "/",
+    // errorElement: <Error />,
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/profile/:id",
+        element: <Profile />,
+      },
+      // {
+      //   path: "/explore",
+      //   element: <Explore />,
+      // },
+      // {
+      //   path: "/signin",
+      //   element: <Signin />,
+      // },
+      // {
+      //   path: "/signout",
+      //   element: <Signin />,
+      // },
+    ],
+  },
+]);
 
 function App() {
   return (
-    <Router>
-      <Layout>
-        <Sider className='sidebar'>
-          <Logo />
-          <MenuList />
-        </Sider>
-        <Switch>
-          <Route path='/home'> {/* Render Home Component */} </Route>
-          <Route path='/following'> {/* Render Following Component */} </Route>
-          <Route path='/search'> {/* Render Search Component */} </Route>
-          <Route path='/notifications'> {/* Render Notifications Component */} </Route>
-          <Route path='/messages'> {/* Render Messages Component */} </Route>
-          <Route path='/upload'> {/* Render Upload Component */} </Route>
-          <Route path='/profile'> {/* Render Profile Component */} </Route>
-        </Switch>
-      </Layout>
-    </Router>
+    <div>
+      <RouterProvider router={router}></RouterProvider>
+    </div>
   );
 }
 
 export default App;
-
