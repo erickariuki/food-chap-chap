@@ -104,7 +104,7 @@ function LoginForm({ onLogin }) {
                         											
                       </div>
                       <div class="text-center my-4">
-                        <Link  className="block px-4 py-2  bg-blue-500 text-white rounded hover:bg-blue-700" to="/auth/google">Login with Google</Link>
+                        <Link  className="" to="/register+your=restaurant">Register your restaurant</Link>
                       </div>
 										</div>
 									</form>

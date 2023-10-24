@@ -15,6 +15,7 @@ import Restaurants from './components/Restaurants'
 import LoginForm from './components/auth/LoginForm'
 import ResetForm from './components/auth/ResetForm'
 import RegisterForm from './components/auth/RegisterForm'
+import RestaurantSignup from './components/auth/SignUp';
 
 import Restaurantdash from './components/Restaurantdash'
 
@@ -66,7 +67,7 @@ function App() {
 
   useEffect(() => {
     // auto-login
-    fetch("/me").then((r) => {
+    fetch(`http://localhost:8080/api/user/${user.username}`).then((r) => {
       if (r.ok) {
         r.json().then((user) => {
           setUser(user);
@@ -167,7 +168,7 @@ function App() {
 <Route path="/customerdash/profile" element={<CustomerProfile restaurants= {restaurants} orders={orders}/>} />
 
 <Route path="/customerdash/loyalty points" element={<LoyaltyPoints />} />
-
+<Route path="/register+your=restaurant" element={<RestaurantSignup />} />
 <Route path="/customerdash/reviews" element={<CustomerReviews restaurants= {restaurants} orders={orders}/>} />
 <Route path="/customerdash/bookings" element={<CustomerBookings restaurants= {restaurants} orders={orders}/>} />
 <Route path="/customerdash/statements" element={<CustomerStatements restaurants= {restaurants} orders={orders}/>} />

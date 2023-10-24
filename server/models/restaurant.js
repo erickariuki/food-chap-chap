@@ -24,6 +24,26 @@ const restaurantSchema = new Schema({
         required: true,
     },
     ratings: [Number],
+    permitDocument: {
+        type: String, 
+        required: true,
+    },
+    taxDocument: {
+        type: String, // You may want to store the file path or URL
+        required: true,
+    },
+    fireClearanceCertificate: {
+        type: String, // You may want to store the file path or URL
+        required: true,
+    },
+    advertisingSignageLicense: {
+        type: String, // You may want to store the file path or URL
+        required: true,
+    },
+    healthCertificate: {
+        type: String, // You may want to store the file path or URL
+        required: true,
+    },
 }, {
     timestamps: true,
 });
