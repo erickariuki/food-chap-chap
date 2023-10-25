@@ -5,7 +5,7 @@ import Review from '../models/Reviews.model.js';
 const router = express.Router();
 
 // Create a new review
-router.post('/api/reviews', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.post('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const { rating, comment, foodItem } = req.body;
     const newReview = new Review({
@@ -22,7 +22,7 @@ router.post('/api/reviews', passport.authenticate('jwt', { session: false }), as
 });
 
 // Retrieve reviews for a specific food item
-router.get('/api/reviews', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { foodItem } = req.query;
     const reviews = await Review.find({ foodItem });
@@ -33,7 +33,7 @@ router.get('/api/reviews', async (req, res) => {
 });
 
 // Edit a review
-router.put('/api/reviews/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.put('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const reviewId = req.params.id;
     const { rating, comment } = req.body;
@@ -61,7 +61,7 @@ router.put('/api/reviews/:id', passport.authenticate('jwt', { session: false }),
 });
 
 // Delete a review
-router.delete('/api/reviews/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.delete('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const reviewId = req.params.id;
 
