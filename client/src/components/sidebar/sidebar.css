@@ -1,0 +1,85 @@
+.sidebarList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+}
+
+.sidebarListItem {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: large;
+  color: black;
+  margin-bottom: 20px;
+}
+
+.sidebarListItem:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  /* adjust the opacity as needed */
+}
+
+.sidebarIcon {
+  /* your icon styles */
+  margin-right: 10px;
+  
+}
+
+.sidebarListItemText {
+  display: none;
+  /* hide text by default */
+}
+
+.sidebarListItem.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  /* adjust the opacity as needed */
+}
+
+/* Collapsed effect - show text only on active/hover */
+.sidebarListItem.active .sidebarListItemText,
+.sidebarListItem:hover .sidebarListItemText {
+  display: inline;
+  /* show text on active/hover state */
+}
+.sidebar {
+  width: 200px;
+  height: 100vh;
+  margin-top: 50px;
+  background-color: red;
+  transition: width 0.3s ease; /* add more properties for smoother transition */
+  position: relative;
+  color: none;
+}
+
+.sidebarWrapper {
+  padding: 20px;
+}
+
+.sidebar.collapsed {
+  width: 60px; /* adjust the collapsed width as needed */
+}
+
+.sidebarToggleBtn {
+  /* styles for your toggle button */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.sidebarToggleBtn:hover{
+  background-color: rgba(255, 255, 255, 0.1);
+}
+/* styles for collapsed sidebar items */
+.sidebar.collapsed .sidebarListItemText {
+  display: none;
+}

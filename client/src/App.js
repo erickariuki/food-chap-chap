@@ -18,8 +18,6 @@ import RegisterForm from './components/auth/RegisterForm'
 import RestaurantSignup from './components/auth/SignUp';
 
 import Restaurantdash from './components/Restaurantdash'
-
-import BlogProfile from './components/blog/BlogProfile';
 import { useEffect, useState } from 'react';
 import Customer from './components/Customer';
  import LoyaltyPoints from './components/LoyaltyPoints';
@@ -45,11 +43,9 @@ import AdminSettlements from './components/AdminSettlements';
 import AdminBookings from './components/AdminBookings';
 import AdminPassword from './components/AdminPassword';
 import AdminRestaurants from './components/AdminRestaurants';
-import BlogPage from './components/blog/BlogPage';
-import CreateBlog from './components/blog/CreateBlog';
 import ContactMe from './components/ContactUs';
 import UserProfile from './components/UserProfile';
-import BlogDetail from './components/blog/BlogDetail';
+import Blog from './pages/blog/Blog';
 import axios from 'axios';
 
 
@@ -180,7 +176,7 @@ axios.get('http://localhost:8080/restaurants')
 <Route path="/customerdash/bookings" element={<CustomerBookings restaurants= {restaurants} orders={orders}/>} />
 <Route path="/customerdash/statements" element={<CustomerStatements restaurants= {restaurants} orders={orders}/>} />
 
-
+<Route path="/blogs" element={<Blog />} />
 <Route path="/admindash" element={<AdminDash/>} />
 <Route path="/admindash/profile" element={<AdminProfile />} />
 <Route path="/admindash/addfood" element={<AdminAddfood />} />
@@ -190,12 +186,6 @@ axios.get('http://localhost:8080/restaurants')
 <Route path="/admindash/bookings" element={<AdminBookings />} />
 <Route path="/admindash/password/termsandconditions" element={<AdminPassword />} />
 <Route path="/admindash/restaurants" element={<AdminRestaurants/>} />
-<Route path="/blogs/createblog" element={<CreateBlog/>} />
-<Route path="/blogs" element={<BlogPage blogs={blogs}  />} />
-
- <Route path="/blogprofile/:id" element={<BlogProfile users={users} />} />
-
-<Route path="/blog/fullcontent/:id" element={<BlogDetail blogs={blogs}  />} />
 <Route path="/contactus" element={<ContactMe />} />
 <Route path="/restaurantdash" element={<Restaurantdash />} />
 <Route path="/restaurantdash/profile" element={<RestaurantProfile/>} />
