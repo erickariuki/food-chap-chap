@@ -17,10 +17,12 @@ function LoginForm({ onLogin }) {
     
       function handleSubmit(e) {
         e.preventDefault();
+      
         fetch("http://localhost:8080/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            credentials: 'include', // Include credentials (cookies, etc.)
           },
           body: JSON.stringify({ username, password }),
         })
@@ -32,13 +34,16 @@ function LoginForm({ onLogin }) {
                 redirectToDashboard(user);
               });
             } else {
-              setErrorMessage("Login details do not match");
+              r.text().then((errorMessage) => {
+                setErrorMessage(errorMessage || "Login details do not match");
+              });
             }
           })
           .catch((error) => {
             setErrorMessage("An error occurred. Please try again.");
           });
       }
+      
 
   return (
    <>

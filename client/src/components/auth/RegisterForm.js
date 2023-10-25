@@ -49,7 +49,7 @@ function RegisterForm({ onLogin }) {
   }
 
   // Display form data
-  // console.log(formData);
+ console.log(formData);
 
   return (
     <>

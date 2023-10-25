@@ -50,6 +50,8 @@ import CreateBlog from './components/blog/CreateBlog';
 import ContactMe from './components/ContactUs';
 import UserProfile from './components/UserProfile';
 import BlogDetail from './components/blog/BlogDetail';
+import axios from 'axios';
+
 
 function App() {
   const [foods, setFoods] = useState([]);
@@ -67,7 +69,7 @@ function App() {
 
   useEffect(() => {
     // auto-login
-    fetch(`http://localhost:8080/api/user/${user.username}`).then((r) => {
+    fetch("/me").then((r) => {
       if (r.ok) {
         r.json().then((user) => {
           setUser(user);
@@ -126,11 +128,16 @@ function App() {
  }, []);
 
 
- useEffect(() => {
-  fetch("/orders")
-            .then((r) => r.json())
-            .then((orders) => setOrders(orders));
-}, []);
+
+axios.get('http://localhost:8080/restaurants')
+  .then((response) => {
+    const restaurants = response.data;
+    console.log(restaurants);
+    // You can now work with the data as needed
+  })
+  .catch((error) => {
+    console.error('An error occurred:', error);
+  });
 
 
 

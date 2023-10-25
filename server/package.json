@@ -6,8 +6,6 @@
   "scripts": {
     "start": "nodemon server.js"
   },
-
-
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -27,12 +25,9 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
-
     "otp-generator": "^4.0.1",
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-google-oauth20": "^2.0.0"
-
   }
 }
-

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+const { ObjectId } = mongoose.Schema.Types;
 const userSchema = mongoose.Schema({
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
