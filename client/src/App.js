@@ -58,7 +58,7 @@ function App() {
   const [cart, setCart] = useState(0);
   const [orders, setOrders] = useState([]);
   const [allorders, setAllOrders] = useState([]);
-  const [restaurants, SetRestaurants] = useState([]);
+  const [restaurants, setRestaurants] = useState([]);
   const [user, setUser] = useState(null);
   const [modal, setModal] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
@@ -121,23 +121,27 @@ function App() {
 }, []);
 
 
-  useEffect(() => {
-    fetch("/restaurants")
-              .then((r) => r.json())
-              .then((restaurants) => SetRestaurants(restaurants));
- }, []);
+//   useEffect(() => {
+//     fetch("/restaurants")
+//               .then((r) => r.json())
+//               .then((restaurants) => SetRestaurants(restaurants));
+//  }, []);
+
+useEffect(() => {
+  // Fetch the restaurant data when the component mounts
+  axios.get('http://localhost:8080/restaurants')
+    .then((response) => {
+      const restaurantsData = response.data;
+      setRestaurants(restaurantsData);
+      console.log(restaurantsData);
+    })
+    .catch((error) => {
+      console.error('An error occurred:', error);
+    });
+}, []);
 
 
 
-axios.get('http://localhost:8080/restaurants')
-  .then((response) => {
-    const restaurants = response.data;
-    console.log(restaurants);
-    // You can now work with the data as needed
-  })
-  .catch((error) => {
-    console.error('An error occurred:', error);
-  });
 
 
 
@@ -208,7 +212,7 @@ axios.get('http://localhost:8080/restaurants')
 
 
 <Route path="/restaurants/:id" element={<RestaurantsMenu restaurants= {restaurants} foods={foods} username={user} updateCart={handleUpdateCart}/>} />
-<Route path="/restaurants" element={<Restaurants restaurants= {restaurants} />}/>
+<Route path="/restaurants" element={<Restaurants restaurants={restaurants} />}/>
 <Route path="/me" element={<UserProfile />} />
 </Routes>
 <Footer />

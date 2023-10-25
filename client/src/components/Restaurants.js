@@ -1,8 +1,10 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-function Restaurants({restaurants}) {
-
+function Restaurants({ restaurants }) {
+	
+	
+console.log(restaurants);
   return (
     <>
     
@@ -221,69 +223,66 @@ function Restaurants({restaurants}) {
 									<div className="listing-sorting-holder">
 										<div className="row">
 											<div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-												<h4>15 Restaurant's found</h4>
+												<h4>{restaurants.length} Restaurant's found</h4>
 											</div>
 										</div>
 									</div>
 									<div className="listing simple">
-										<ul>
-										
-
-
-
-
-										{restaurants.map((restaurant) => (
-  
-  <li>
-  <div key={restaurant.id} className="img-holder">
-	  <figure>
-		  <a href="#"><img src={`assets/extra-images/${restaurant.image}`} className="img-list wp-post-image" alt="#"/> </a>
-	  </figure>
-	  {/* <span className="restaurant-status open"><em className="bookmarkRibbon"></em>Open</span> */}
-	  <span className={`restaurant-status ${restaurant.status}`}><em className="bookmarkRibbon"></em>{restaurant.status}</span>
-  </div>
-  <div className="text-holder">
-  <div className="list-rating">
-		  <div className="rating-star">
-			  <span className="rating-box"  style={{ width: '100%' }}></span>
-		  </div>
-		  <span className="reviews">(1)</span>
-	  </div>
-	  <div className="post-title">
-		  <h5>
-			  <a href="1">{restaurant.name}</a>
-		  </h5>
-	  </div>
-	  <span className="post-categories"><span>Type of food :
-		  </span> Apple
-		  Juice, Carrot Juice, Ice Cream</span>
-	  <div className="delivery-potions">
-  
-		  <div className="post-time">
-			  <i className="icon-clock4"></i>
-			  <div className="time-tooltip">
-				  <div className="time-tooltip-holder"> <b className="tooltip-label">Preparing Time</b> <b className="tooltip-info">Estimated Cook Time
-						  15 minutes.</b> </div>
-			  </div>
-		  </div>
-	  </div>
-  </div>
-  <div className="list-option">
-	  <a href="#" className="shortlist-btn" data-toggle="modal" data-target="#sign-in">
-		  <i className="icon-heart-o"></i> 
-	  </a>
-	
-	  <NavLink className="viewmenu-btn text-color" to={`${restaurant.id}`}>
-	  View Menu
-                                                        </NavLink>
-	 
-  </div>
-</li>
-))}
-
-
-										</ul>
-									</div>
+												<ul>
+													{restaurants.map((restaurant) => (
+													<li key={restaurant._id}>
+														<div className="img-holder">
+														<figure>
+															<a href="#">
+															<img src={restaurant.image} className="img-list wp-post-image" alt="#" />
+															</a>
+														</figure>
+														<span className={`restaurant-status ${restaurant.openingHours === 'full time' ? 'open' : 'closed'}`}>
+															<em className="bookmarkRibbon"></em>
+															{restaurant.openingHours === 'full time' ? 'Open' : 'Closed'}
+														</span>
+														</div>
+														<div className="text-holder">
+														<div className="list-rating">
+															<div className="rating-star">
+															<span className="rating-box" style={{ width: '100%' }}></span>
+															</div>
+															<span className="reviews">(1)</span>
+														</div>
+														<div className="post-title">
+															<h5>
+															<a href="1">{restaurant.name}</a>
+															</h5>
+														</div>
+														<span className="post-categories">
+															<span>Type of food: {Array.isArray(restaurant.cuisines) ? restaurant.cuisines.join(', ') : 'N/A'}</span>
+														</span>
+														<div className="delivery-potions">
+															<div className="post-time">
+															<i className="icon-clock4"></i>
+															<div className="time-tooltip">
+																<div className="time-tooltip-holder">
+																<b className="tooltip-label">Preparing Time</b>
+																<b className="tooltip-info">Estimated Cook Time 15 minutes.</b>
+																</div>
+															</div>
+															</div>
+														</div>
+														</div>
+														<div className="list-option">
+														<a href="#" className="shortlist-btn" data-toggle="modal" data-target="#sign-in">
+															<i className="icon-heart-o"></i>
+														</a>
+														<NavLink className="viewmenu-btn text-color" to={`/${restaurant._id}`}>
+															View Menu
+														</NavLink>
+														</div>
+													</li>
+													))}
+												</ul>
+												</div>
+											
+              
 									<div className="row">
 										<div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<div className="page-nation">
