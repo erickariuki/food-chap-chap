@@ -36,15 +36,28 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-
 // Edit a review
-router.put('/:id', async (req, res) => {
-  // Your code here...
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const update = req.body;
+    const updatedReview = await Review.findByIdAndUpdate(id, update, { new: true });
+    res.status(200).json(updatedReview);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Delete a review
-router.delete('/:id', async (req, res) => {
-  // Your code here...
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deletedReview = await Review.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Review deleted successfully', review: deletedReview });
+  } catch (error) {
+    next(error);
+  }
 });
+
 
 export default router;
