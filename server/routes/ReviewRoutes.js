@@ -1,86 +1,50 @@
 import express from 'express';
-import passport from 'passport';
 import Review from '../models/Reviews.model.js';
+import mongoose from 'mongoose';
 
 const router = express.Router();
 
 // Create a new review
-router.post('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const { rating, comment, foodItem } = req.body;
+    const { rating, comment, foodItem, userId } = req.body;
     const newReview = new Review({
       rating,
       comment,
-      user: req.user._id, // Associate the review with the authenticated user
       foodItem,
+      user: new mongoose.Types.ObjectId(userId)  // Convert userId to an ObjectId
     });
     const savedReview = await newReview.save();
-    res.status(201).json(savedReview);
+    res.status(201).json({message: '${foodItem} has been reviewed with a score of ${rating}'});
   } catch (error) {
+    console.error(error);  // Log the error to the console
     res.status(500).json({ error: 'Unable to create the review.' });
   }
 });
 
 // Retrieve reviews for a specific food item
-router.get('/', async (req, res) => {
+
+router.get('/', async (req, res, next) => {
   try {
     const { foodItem } = req.query;
+    console.log(`Querying for reviews of ${foodItem}`);  // Log the foodItem to the console
     const reviews = await Review.find({ foodItem });
+    console.log(reviews);  // Log the reviews to the console
     res.status(200).json(reviews);
   } catch (error) {
-    res.status(500).json({ error: 'Unable to retrieve reviews.' });
+    next(error);
   }
 });
 
+
 // Edit a review
-router.put('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  try {
-    const reviewId = req.params.id;
-    const { rating, comment } = req.body;
-
-    // Check if the review belongs to the authenticated user
-    const review = await Review.findById(reviewId);
-    if (!review || review.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Unauthorized to edit this review.' });
-    }
-
-    const updatedReview = await Review.findByIdAndUpdate(
-      reviewId,
-      { rating, comment },
-      { new: true }
-    );
-
-    if (!updatedReview) {
-      return res.status(404).json({ error: 'Review not found.' });
-    }
-
-    res.status(200).json(updatedReview);
-  } catch (error) {
-    res.status(500).json({ error: 'Unable to update the review.' });
-  }
+router.put('/:id', async (req, res) => {
+  // Your code here...
 });
 
 // Delete a review
-router.delete('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  try {
-    const reviewId = req.params.id;
-
-    // Check if the review belongs to the authenticated user
-    const review = await Review.findById(reviewId);
-    if (!review || review.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Unauthorized to delete this review.' });
-    }
-
-    const deletedReview = await Review.findByIdAndDelete(reviewId);
-
-    if (!deletedReview) {
-      return res.status(404).json({ error: 'Review not found.' });
-    }
-
-    res.status(204).end();
-  } catch (error) {
-    res.status(500).json({ error: 'Unable to delete the review.' });
-  }
+router.delete('/:id', async (req, res) => {
+  // Your code here...
 });
 
 export default router;
