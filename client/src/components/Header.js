@@ -112,7 +112,7 @@ function Header({user, onLogout}) {
         <>
               <li><a className="cs-color cs-popup-joinus-btn login-popup" data-target="#sign-in" data-toggle="modal" href="#user-register" style={{color: "#e51b1b"}}>Login / Register</a>
 									</li>
-									<li><a className="get-start-btn btn btn-sm" data-target="#sign-in" data-toggle="modal" href="#user-register"  style={{
+									<li><a className="get-start-btn btn btn-sm" data-target="#sign-in" data-toggle="modal" href="register+your=restaurant"  style={{
     backgroundColor: '#c33332',
     borderRadius: '3px',
     color: '#fff',

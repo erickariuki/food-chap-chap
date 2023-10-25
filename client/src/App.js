@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 // import Main from './components/main';
 import ReCAPTCHA from './components/RecaptchaForm';
 import TermsAndConditionsPage from './components/TermsAndConditionPage.js'; 
@@ -51,6 +51,7 @@ import ContactMe from './components/ContactUs';
 import UserProfile from './components/UserProfile';
 import BlogDetail from './components/blog/BlogDetail';
 import axios from 'axios';
+import RegisterRestaurant from './components/auth/RegisterRestaurant';
 
 
 function App() {
@@ -180,14 +181,15 @@ useEffect(() => {
 
 <Route path="/customerdash/loyalty points" element={<LoyaltyPoints />} />
 <Route path="/register+your=restaurant" element={<RestaurantSignup />} />
+<Route path="/create+your=account" element={<RegisterForm onLogin={setUser}/>} />
 <Route path="/customerdash/reviews" element={<CustomerReviews restaurants= {restaurants} orders={orders}/>} />
 <Route path="/customerdash/bookings" element={<CustomerBookings restaurants= {restaurants} orders={orders}/>} />
 <Route path="/customerdash/statements" element={<CustomerStatements restaurants= {restaurants} orders={orders}/>} />
-
+<Route path="/register+your=restaurant/create+restaurant=form" element={<RegisterRestaurant />} />
 
 <Route path="/admindash" element={<AdminDash/>} />
 <Route path="/admindash/profile" element={<AdminProfile />} />
-<Route path="/admindash/addfood" element={<AdminAddfood />} />
+<Route path="/create+your=accountadmindash/addfood" element={<AdminAddfood />} />
 <Route path="/admindash/foods" element={<AdminFoods />} />
 <Route path="/admindash/reviews" element={<AdminReviews />} />
 <Route path="/admindash/settlements" element={<AdminSettlements />} />
@@ -229,12 +231,6 @@ useEffect(() => {
         <>
           <LoginForm onLogin={setUser} />
           <ReCAPTCHA/>
-         
-
-
-
-    
-          
 									<div  style={{ paddingLeft: '27px' }} className="signin-tab-link forget-password">
 										New Here?
 										<span    onClick={() => {
@@ -244,7 +240,7 @@ useEffect(() => {
 				textDecoration: 'underline',
 				color: '#5454ff',
 				paddingLeft: '5px'
-			  }}> Sign Up</span><br/>
+			  }} > <Link to="/create+your=account">Sign Up</Link></span><br/>
 									</div>
 	   
 									<div  style={{ paddingLeft: '27px' }} className="signin-tab-link forget-password">
@@ -287,7 +283,7 @@ useEffect(() => {
         </>
       ) : (
         <>
-          <RegisterForm onLogin={setUser} />
+          {/* <RegisterForm onLogin={setUser} /> */}
 		  <div  style={{ paddingLeft: '27px' }} className="signin-tab-link forget-password">
 									Have an Account?
                   <span    onClick={() => {

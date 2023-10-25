@@ -1,6 +1,36 @@
 import React from 'react'
+import emailjs from '@emailjs/browser';
+import Swal from 'sweetalert2';
 
 function Footer() {
+		
+	const currentDate = new Date();
+  	const currentYear = currentDate.getFullYear();
+	 
+	const SERVICE_ID = "service_6mnqy2n";
+	const TEMPLATE_ID ="template_w49h6bs";
+	const PUBLIC_KEY = "E1ZeG4ClRU_5Ud6PG";
+
+	const handleOnSubmit = (e) => {
+		e.preventDefault();
+		emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, e.target, PUBLIC_KEY)
+		  .then((result) => {
+			console.log(result.text);
+			Swal.fire({
+			  icon: 'success',
+			  title: 'Successfully signed up',
+			})
+		  }, (error) => {
+			console.log(error.text);
+			Swal.fire({
+			  icon: 'error',
+			  title: 'Ooops, something went wrong',
+			  text: error.text,
+			})
+		  });
+		e.target.reset()
+	  };
+	
   return (
     <>
     	<footer id="footer" className="footer-style-2">
@@ -13,18 +43,26 @@ function Footer() {
 									<h5>Subscribe to our Newsletter</h5>
 								</div>
 								<div className="fieldset">
-									<form action="#">
+									<form onSubmit={handleOnSubmit}>
 										<div className="field-holder">
 											<label>
 												<i className=" icon-envelope3"></i>
-												<input type="text" className="field-input" placeholder=" Enter Your Email Address..."/>
+												<input
+												 type="email"
+												className="field-input"
+												 placeholder=" Enter Your Email Address..."
+												name="user_email"
+												style={{
+													color: "black",
+												}}
+												 />
 											</label>
 										</div>
 										<div className="field-holder btn-holder">
-											<input className="subscribe-btn bgcolor" type="button" onClick="location.href='registration.html'" value="Sign Up"/>
+											<input className="subscribe-btn bgcolor" type="submit"   value="Sign Up"/>
 										</div>
 									</form>
-								</div>
+									
 							</div>
 						</div>
 						<div className="col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -32,10 +70,10 @@ function Footer() {
 								<div className="widget-title">
 									<h5>About us</h5>
 								</div>
-								<div className="textwidget">Foodbakery is the business of food and restaurants.
-									Ridiculus sociosqu cursus neque cursus curae ante scelerisque vehicula.
-									Explore restaurants, bars, and cafés by locality cum doctus civibus
-									efficiantur in imperdiet deterruisset. FoodBakery Just ordered me some grub
+								<div className="textwidget">
+								FoodChapChap streamlines dining with our Pre-Order Service, cutting wait times in half. Whether dining in or taking out, 
+								we've got you covered. Our vision is to simplify food ordering for all. Enjoy a seamless, efficient dining experience with 
+								us  the future of restaurant convenience
 								</div>
 							</div>
 						</div>
@@ -45,10 +83,10 @@ function Footer() {
 									<h5>Popular Cities</h5>
 								</div>
 								<ul>
-									<li><a href="listings.html">Aberaeron</a></li>
-									<li><a href="listings.html">Aberdeenshire</a></li>
-									<li><a href="listings.html">Anston</a></li>
-									<li><a href="listings.html">Ascot</a></li>
+									<li><a href="listings.html">Nairobi</a></li>
+									<li><a href="listings.html">Mombasa</a></li>
+									<li><a href="listings.html">Nakuru</a></li>
+									<li><a href="listings.html">Eldoret</a></li>
 								</ul>
 							</div>
 						</div>
@@ -71,10 +109,10 @@ function Footer() {
 									<h5>Menu</h5>
 								</div>
 								<ul>
-									<li><a href="blog-large.html">Blog Large</a></li>
-									<li><a href="blog-medium.html">Blog Medium</a></li>
-									<li><a href="blog-medium.html">Blog Masonry</a></li>
-									<li><a href="contact-us.html">Contact</a></li>
+									<li><a href="blogs">Blog Large</a></li>
+									<li><a href="admindash/foods">Home</a></li>
+									<li><a href="blogs">Blog Masonry</a></li>
+									<li><a href="contactus">Contact</a></li>
 									<li><a href="faq.html">FAQ’s</a></li>
 									<li><a href="how-it-works.html">How itworks</a></li>
 								</ul>
@@ -108,7 +146,7 @@ function Footer() {
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 							<div className="copyright-inner">
 								<div className="copy-right">
-									<p>© 2017 Foodbakery. All Rights Reserved. Powered By <a href="#">foodchapchap</a>.
+									<p>© {currentYear} FoodChapChap. All Rights Reserved. Powered By <a href="#">foodchapchap</a>.
 									</p>
 								</div>
 							</div>
@@ -116,11 +154,10 @@ function Footer() {
 					</div>
 				</div>
 			</div> 
+			</div>
 		</footer>
     </>
-
-
   )
-}
+};
 
 export default Footer

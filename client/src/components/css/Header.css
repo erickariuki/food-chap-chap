@@ -1,0 +1,10 @@
+/* Hide the main menu and display the menu button on mobile screens */
+@media (max-width: 768px) {
+    .main-menu {
+      display: none;
+    }
+    .menu-button {
+      display: block;
+    }
+  }
+  
