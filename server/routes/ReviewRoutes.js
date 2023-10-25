@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import Review from '../models/Review';
+import Review from '../models/Reviews.model.js';
 
 const router = express.Router();
 
