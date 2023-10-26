@@ -1,10 +1,10 @@
-import "./post.css";
-import { MoreVert } from "@mui/icons-material";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { format } from "timeago.js";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { MoreVert } from "@mui/icons-material";
+import "./post.css";
 
 export default function Post({ post }) {
   const [like, setLike] = useState(post.likes.length);
@@ -19,15 +19,19 @@ export default function Post({ post }) {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await axios.get(`/users/${post.userId}`);
-      setUser(res.data);
+      try {
+        const res = await axios.get(`http://localhost:8080/api/posts/UserProfile/${user.username}`);
+        setUser(res.data);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
     };
     fetchUser();
-  }, [post.userId]);
+  }, [user.username]);
 
-  const likeHandler = () => {
+  const likeHandler = async () => {
     try {
-      axios.put(`/posts/${post._id}/like`, { userId: currentUser._id });
+      await axios.put(`http://localhost:8080/api/posts/${post._id}/like`, { userId: currentUser._id });
     } catch (err) {
       console.error(err);
     }
@@ -60,7 +64,7 @@ export default function Post({ post }) {
         </div>
         <div className="postCenter">
           <span className="postText">{post?.desc}</span>
-          {post.img && <img className="postImg" src={`${PF}${post.img}`} alt="" />}
+          {post.pic && <img className="postImg" src={`${PF}${post.pic}`} alt="" />}
         </div>
         <div className="postBottom">
           <div className="postBottomLeft">
@@ -79,10 +83,11 @@ export default function Post({ post }) {
             <span className="postLikeCounter">{like} {like === 1 ? 'person' : 'people'} like it</span>
           </div>
           <div className="postBottomRight">
-            <span className="postCommentText">{post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}</span>
+            <span className="postCommentText">{post.replies.length} {post.replies.length === 1 ? 'comment' : 'comments'}</span>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

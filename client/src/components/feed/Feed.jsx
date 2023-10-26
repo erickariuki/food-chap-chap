@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
 import Post from "../post/Post";
 import Share from "../CreatePost/CreatePost";
 import "./feed.css";
-import axios from "axios";
-import { AuthContext } from "../../context/AuthContext";
 
 export default function Feed({ username }) {
   const [posts, setPosts] = useState([]);
@@ -13,26 +13,22 @@ export default function Feed({ username }) {
     const fetchPosts = async () => {
       try {
         if (user) {
-          const res = username
-            ? await axios.get(`/api/posts/profile/${username}`)
-            : await axios.get(`/api/posts/timeline/${user._id}`);
-          setPosts(
-            res.data.sort((p1, p2) => {
-              return new Date(p2.createdAt) - new Date(p1.createdAt);
-            })
-          );
+          const endpoint = username
+            ? `/UserProfile/${username}`
+            : `/timeline/${user._id}`;
+          const response = await axios.get(`http://localhost:8080/api/posts${endpoint}`);
+          setPosts(response.data.sort((p1, p2) => new Date(p2.createdAt) - new Date(p1.createdAt)));
         }
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
     };
-  
+
     // Check if user exists before fetching posts
-    if (user !== null && user !== undefined) {
+    if (user) {
       fetchPosts();
     }
   }, [username, user]);
-  
 
   return (
     <div className="feed">
@@ -45,3 +41,4 @@ export default function Feed({ username }) {
     </div>
   );
 }
+
