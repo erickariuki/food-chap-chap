@@ -9,4 +9,5 @@ router.put("/unfollow", Auth, unfollowUser);
 router.put("/updatepic", Auth, updateProfilePic);
 router.post("/search-users", Auth, searchUsers);
 
+
 export default router;

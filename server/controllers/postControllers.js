@@ -1,4 +1,5 @@
 import Post from "../model/postModel.js";
+import User from '../model/User.model.js'
 import multer from 'multer';
     
 // Check File Type
@@ -171,5 +172,34 @@ export async function commentOnPost(req, res) {
     }
 }
 
+export async function Timeline (req, res) {
+    try {
+      const currentUser = await User.findById(req.params.userId);
+      const userPosts = await Post.find({ postedBy: currentUser._id });
+      const friendPosts = await Promise.all(
+        currentUser.followings.map((friendId) => {
+          return Post.find({ postedBy: friendId });
+        })
+      );
+      const timelinePosts = userPosts.concat(...friendPosts);
+      res.status(200).json(timelinePosts);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  };
+
+  export async function getUserProfile (req, res) {
+    try {
+      const user = await User.findOne({ username: req.params.username });
+      if (!user) {
+        res.status(404).json("User not found");
+        return;
+      }
+      const posts = await Post.find({ postedBy: user._id });
+      res.status(200).json(posts);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  };
 
   

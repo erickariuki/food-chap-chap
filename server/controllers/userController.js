@@ -2,6 +2,7 @@ import User from "../model/User.model.js";
 import Post from "../model/postModel.js";
 
 
+
 export async function getUser(req, res) {
       const { userId, username } = req.query;
       try {
@@ -176,3 +177,4 @@ export async function searchUsers (req, res) {
             console.log(err);
         });
 };
+
