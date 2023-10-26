@@ -1,33 +1,39 @@
 # food-chap-chap
 
-
 # Generate JWT SECRET
-openssl rand -base64 32 
+
+openssl rand -base64 32
 
 # Create an Ethereal Email
+
 create Ethereal Email : https://ethereal.email/create
 
 # Add Node Node Modules By:
+
 npm install nodemon morgan otp-generator mongodb jsonwebtoken bcrypt nodemailer
 
 # Use this as MongoDB URL (Ask Philip for Invite if You Dont Have Access)
-ATLAS_URI: "mongodb+srv://fudchapchap2:$Philip2004$@users.nucnmse.mongodb.net/?retryWrites=true&w=majority" 
-##  to start server not nodemon server.js
+
+ATLAS_URI: "mongodb+srv://fudchapchap2:$Philip2004$@users.nucnmse.mongodb.net/?retryWrites=true&w=majority"
+
+## to start server not nodemon server.js
 
 npm start
+
 ## create this file called config.js
+
     find your own jwt secret
 
 export default {
-        JWT_SECRET : "UMFpwrCZfo/+76FvY5sv71sMBVa/o32I8H9qKJGmEZc=",
-        EMAIL:"audie5@ethereal.email",//testing email address by ethereal
-        PASSWORD:"2dC9adwjkF9KUHY6gf",
-        ATLAS_URI: "mongodb+srv://fudchapchap2:$Philip2004$@users.nucnmse.mongodb.net/?retryWrites=true&w=majority"
+JWT_SECRET : "UMFpwrCZfo/+76FvY5sv71sMBVa/o32I8H9qKJGmEZc=",
+EMAIL:"audie5@ethereal.email",//testing email address by ethereal
+PASSWORD:"2dC9adwjkF9KUHY6gf",
+ATLAS_URI: "mongodb+srv://fudchapchap2:$Philip2004$@users.nucnmse.mongodb.net/?retryWrites=true&w=majority"
 }
 
 ## create a .gitignore file
 
-add this 
+add this
 
                 #dependencies
                 client/node_modules/
@@ -44,7 +50,7 @@ add this
                 yarn-error.log*
                 pnpm-debug.log*
 
-                
+
                 .log*
 
                 node_modules
@@ -95,15 +101,14 @@ add this
                 *.user
                 *.sln
                 *.swp
+
 ## passport.js installations
 
 npm install passport-google-oauth2
 
-
-## for the front end client 
+## for the front end client
 
 install this
-    npm install @emailjs/browser
-    npm install react-google-recaptcha
-    npm install react-type-animation sweetalert2 react-quill
-
+npm install @emailjs/browser
+npm install react-google-recaptcha
+npm install react-type-animation sweetalert2 react-quill
