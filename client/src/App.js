@@ -136,6 +136,17 @@ axios.get('http://localhost:8080/restaurants')
   });
 
 
+  axios.get('http://localhost:8080/posts/allpost')
+  .then((response) => {
+    const posts = response.data;
+    console.log(posts);
+    // You can now work with the data as needed
+  })
+  .catch((error) => {
+    console.error('An error occurred:', error);
+  });
+
+
 
   function handleAddFood(newFood) {
     setFoods([...foods, newFood]);

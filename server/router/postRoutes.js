@@ -12,7 +12,7 @@ router.get("/mypost", Auth, getMyPosts);
 router.put("/like", Auth, likePost);
 router.put("/unlike", Auth, unlikePost);
 router.put("/comment", Auth, commentOnPost);
-router.delete("/deletepost", Auth, deletePost);
+router.delete("/deletepost/:id", Auth, deletePost);
 router.get("/timeline/:userId", Timeline)
 router.get("/UserProfile/:username", getUserProfile)
 

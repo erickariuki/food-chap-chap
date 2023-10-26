@@ -1,44 +1,71 @@
-import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { AuthContext } from "../../context/AuthContext";
-import Post from "../post/Post";
-import Share from "../CreatePost/CreatePost";
-import "./feed.css";
+import React, { useEffect, useState } from 'react';
+import CreatePost from '../CreatePost/CreatePost';
+import Post from '../post/Post';
+import './feed.css';
 
-export default function Feed({ username }) {
+export default function Feed() {
+  const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
-  const { user } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchData = async () => {
       try {
-        if (user) {
-          const endpoint = username
-            ? `/UserProfile/${username}`
-            : `/timeline/${user._id}`;
-          const response = await axios.get(`http://localhost:8080/api/posts${endpoint}`);
-          setPosts(response.data.sort((p1, p2) => new Date(p2.createdAt) - new Date(p1.createdAt)));
+        const accessToken = localStorage.getItem('accessToken'); // Get the access token from localStorage
+
+        // Make sure you have a valid access token before making the request
+        if (!accessToken) {
+          // Handle the case where there is no access token (e.g., redirect to login)
+          console.error('Access token is missing.');
+          return;
         }
+
+        // Fetch user data with Authorization header
+        const userResponse = await fetch('http://localhost:8080/api/users', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+
+        const userData = await userResponse.json();
+        setUser(userData);
+
+        // Fetch all posts with Authorization header
+        const postsResponse = await fetch('http://localhost:8080/api/posts/allpost', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+
+        const postsData = await postsResponse.json();
+        console.log('Posts Data:', postsData); // Log the received data
+
+        setPosts(postsData);
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    // Check if user exists before fetching posts
-    if (user) {
-      fetchPosts();
-    }
-  }, [username, user]);
 
-  return (
-    <div className="feed">
-      <div className="feedWrapper">
-        {(!username || username === user.username) && <Share />}
-        {posts.map((post) => (
-          <Post key={post._id} post={post} />
-        ))}
-      </div>
-    </div>
-  );
+  fetchData();
+}, []); // Empty dependency array to fetch data only once when the component mounts
+
+return (
+  <div className='mainPostContainer'>
+    <CreatePost user={user} />
+    {isLoading ? (
+      <p>Loading...</p>
+    ) : (
+      posts.length > 0 ? (
+        <Post key={posts._id} post={posts} /> // Displaying the first post directly without mapping
+      ) : (
+        <p>No posts available.</p>
+      )
+    )}
+  </div>
+);
 }
-

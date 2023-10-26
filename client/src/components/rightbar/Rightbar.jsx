@@ -1,131 +1,76 @@
-import "./rightbar.css";
-import { Users } from "../../dummyData";
-import Online from "../online/Online";
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
-import { Add, Remove } from "@mui/icons-material";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Follow from './Follow'; // Make sure the path to the Follow component is correct
+import PersonPinIcon from '@mui/icons-material/PersonPin';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 
-export default function Rightbar({ user }) {
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const [friends, setFriends] = useState([]);
-  const { user: currentUser, dispatch } = useContext(AuthContext);
-  const [followed, setFollowed] = useState(
-    currentUser?.followings?.includes(user?._id)
-  );
+export default function Rightbar ({ userdetails }) {
+  const [followStatus, setFollowStatus] = useState(PersonAddAltIcon);
 
-  useEffect(() => {
-    const getFriends = async () => {
-      try {
-        const friendList = await axios.get("/users/friends/" + user?._id);
-        setFriends(friendList.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getFriends();
-  }, [user]);
-
-  const handleClick = async () => {
+  const handleFollow = async () => {
     try {
-      if (followed) {
-        await axios.put(`/users/${user?._id}/unfollow`, {
-          userId: currentUser?._id,
-        });
-        dispatch({ type: "UNFOLLOW", payload: user?._id });
-      } else {
-        await axios.put(`/users/${user?._id}/follow`, {
-          userId: currentUser?._id,
-        });
-        dispatch({ type: "FOLLOW", payload: user?._id });
-      }
-      setFollowed(!followed);
-    } catch (err) {
-      console.error("Error updating follow status:", err);
+      // Assuming you have user data stored in localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      const id = user?.other?._id;
+      const accessToken = user?.accessToken;
+
+      await axios.put(`http://localhost:8080/api/user/following/${userdetails._id}`, { user: id }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+      setFollowStatus(PersonPinIcon);
+    } catch (error) {
+      console.error('Error following user:', error);
     }
   };
 
-  const HomeRightbar = () => {
-    return (
-      <>
-        <div className="birthdayContainer">
-          <img className="birthdayImg" src="assets/gift.png" alt="" />
-          <span className="birthdayText">
-            <b>Pola Foster</b> and <b>3 other friends</b> have a birhday today.
-          </span>
-        </div>
-        <img className="rightbarAd" src="assets/ad.png" alt="" />
-        <h4 className="rightbarTitle">Online Friends</h4>
-        <ul className="rightbarFriendList">
-          {Users.map((u) => (
-            <Online key={u.id} user={u} />
-          ))}
-        </ul>
-      </>
-    );
-  };
+  useEffect(() => {
+    // Check if the current user is following this user (userdetails._id) and update followStatus accordingly.
+    const checkFollowStatus = async () => {
+      try {
+        // Assuming you have user data stored in localStorage
+        const user = JSON.parse(localStorage.getItem('user'));
+        const id = user?.other?._id;
+        const accessToken = user?.accessToken;
 
-  const ProfileRightbar = () => {
-    return (
-      <>
-        {user.username !== currentUser.username && (
-          <button className="rightbarFollowButton" onClick={handleClick}>
-            {followed ? "Unfollow" : "Follow"}
-            {followed ? <Remove /> : <Add />}
-          </button>
-        )}
-        <h4 className="rightbarTitle">User information</h4>
-        <div className="rightbarInfo">
-          <div className="rightbarInfoItem">
-            <span className="rightbarInfoKey">City:</span>
-            <span className="rightbarInfoValue">{user.city}</span>
-          </div>
-          <div className="rightbarInfoItem">
-            <span className="rightbarInfoKey">From:</span>
-            <span className="rightbarInfoValue">{user.from}</span>
-          </div>
-          <div className="rightbarInfoItem">
-            <span className="rightbarInfoKey">Relationship:</span>
-            <span className="rightbarInfoValue">
-              {user.relationship === 1
-                ? "Single"
-                : user.relationship === 1
-                ? "Married"
-                : "-"}
-            </span>
-          </div>
-        </div>
-        <h4 className="rightbarTitle">User friends</h4>
-        <div className="rightbarFollowings">
-          {friends.map((friend) => (
-            <Link
-              to={"/profile/" + friend.username}
-              style={{ textDecoration: "none" }}
-            >
-              <div className="rightbarFollowing">
-                <img
-                  src={
-                    friend.profilePicture
-                      ? PF + friend.profilePicture
-                      : PF + "person/noAvatar.png"
-                  }
-                  alt=""
-                  className="rightbarFollowingImg"
-                />
-                <span className="rightbarFollowingName">{friend.username}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </>
-    );
-  };
+        const response = await axios.get(`http://localhost:8080/api/users/followers/${userdetails._id}`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+        if (response.data.followers.includes(id)) {
+          setFollowStatus(PersonPinIcon);
+        } else {
+          setFollowStatus(PersonAddAltIcon);
+        }
+      } catch (error) {
+        console.error('Error checking follow status:', error);
+      }
+    };
+
+    checkFollowStatus();
+  }, [userdetails._id]);
+
   return (
-    <div className="rightbar">
-      <div className="rightbarWrapper">
-        {user ? <ProfileRightbar /> : <HomeRightbar />}
+    <div style={{ marginTop: "-10px" }} key={userdetails._id}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Link to={`/Profile/${userdetails._id}`}>
+          <div style={{ display: 'flex', alignItems: "center" }}>
+            <img src={`${userdetails.profile}`} className="Profileimage" alt="" />
+            <div>
+              <p style={{ marginLeft: "10px", textAlign: 'start' }}>{userdetails.username}</p>
+              <p style={{ marginLeft: "10px", textAlign: 'start', marginTop: "-16px", fontSize: "11px", color: "#aaa" }}>Suggested for you</p>
+            </div>
+          </div>
+        </Link>
+        <div style={{ backgroundColor: "#aaa", padding: '10px', marginRight: 13, borderRadius: "50%", cursor: 'pointer' }} onClick={handleFollow}>
+          <img src={`${followStatus}`} className="addfriend" alt="" />
+        </div>
+        {userdetails && <Follow userdetails={userdetails} />}
       </div>
     </div>
   );
 }
+

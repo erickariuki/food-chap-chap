@@ -1,93 +1,40 @@
-.share {
-  width: 100%;
+.ContentUploadContainer{
+  width: 70%;
+  background-color: white;
+  margin: 50px;
+  margin-top: 100px;
   border-radius: 10px;
-  -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
-  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
 }
 
-.shareWrapper {
-  padding: 10px;
-}
-
-.shareTop {
-  display: flex;
-  align-items: center;
-}
-
-.shareProfileImg {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-}
-
-.shareInput {
+.contentWritingpart{
+  width: 29pc;
+  margin-left: 10px;
+  margin-top: 5px;
+  height: 4vh;
   border: none;
-  width: 80%;
 }
 
-.shareInput:focus {
-  outline: none;
+.profileimage{
+  width:40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-left: 10px;
+  
 }
 
-.shareHr {
-  margin: 20px;
-}
-
-.shareBottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.shareOptions{
-    display: flex;
-    margin-left: 20px;
-}
-
-.shareOption{
-    display: flex;
-    align-items: center;
-    margin-right: 15px;
-    cursor: pointer;
-}
-
-.shareIcon{
-    font-size: 18px;
-    margin-right: 3px;
-}
-
-.shareOptionText{
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.shareButton{
-    border: none;
-    padding: 7px;
-    border-radius: 5px;
-    background-color: green;
-    font-weight: 500;
-    margin-right: 20px;
-    cursor: pointer;
-    color: white;
-}
-
-.shareImgContainer{
-  padding: 0 20px 10px 20px;
-  position: relative;
-}
-
-.shareImg{
-  width: 100%;
-  object-fit: cover;
-}
-
-.shareCancelImg{
-  position: absolute;
-  top: 0;
-  right: 20px;
+.icons{
+  width: 24px;
+  height: 24px;
+  margin-left: 20px;
+  margin-top: 49px;
   cursor: pointer;
-  opacity: 0.7;
+  display: flex;
+}
+.PostIcons{
+  width: 24px;
+  height: 24px;
+}
+
+.OtherIcons{
+  display: flex;
 }
