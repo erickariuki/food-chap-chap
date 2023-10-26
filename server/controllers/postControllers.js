@@ -145,32 +145,32 @@ export async function commentOnPost(req, res) {
   }
 
 
-  export async function deletePost(req, res) {
-    try {
-        const postId = req.params.postId;
-        const post = await Post.findOne({ _id: postId }).populate("postedBy", "_id");
+//   export async function deletePost(req, res) {
+//     try {
+//         const postId = req.params.postId;
+//         const post = await Post.findOne({ _id: postId }).populate("postedBy", "_id");
 
-        if (!post) {
-            return res.status(404).json({ error: "Post not found" });
-        }
+//         if (!post) {
+//             return res.status(404).json({ error: "Post not found" });
+//         }
 
-        // Ensure the post has a valid 'postedBy' field before comparing IDs
-        if (!post.postedBy || !post.postedBy._id) {
-            return res.status(500).json({ error: "Invalid post data" });
-        }
+//         // Ensure the post has a valid 'postedBy' field before comparing IDs
+//         if (!post.postedBy || !post.postedBy._id) {
+//             return res.status(500).json({ error: "Invalid post data" });
+//         }
 
-        // Check if the current user is the creator of the post
-        if (post.postedBy._id.toString() === req.user._id.toString()) {
-            await post.remove();
-            return res.status(200).json({ message: "Post deleted successfully" });
-        } else {
-            return res.status(401).json({ error: "Unauthorized request" });
-        }
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
-    }
-}
+//         // Check if the current user is the creator of the post
+//         if (post.postedBy._id.toString() === req.user._id.toString()) {
+//             await post.remove();
+//             return res.status(200).json({ message: "Post deleted successfully" });
+//         } else {
+//             return res.status(401).json({ error: "Unauthorized request" });
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ error: "Internal Server Error" });
+//     }
+// }
 
 export async function Timeline (req, res) {
     try {
@@ -197,6 +197,24 @@ export async function Timeline (req, res) {
       }
       const posts = await Post.find({ postedBy: user._id });
       res.status(200).json(posts);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  };
+
+  export async function deletePost (req, res) {
+    try {
+      const post = await Post.findById(req.params.id);
+      if (!post) {
+        res.status(404).json("Post not found");
+        return;
+      }
+      if (String(post.postedBy) === req.body.userId) {
+        await post.deleteOne();
+        res.status(200).json("The post has been deleted");
+      } else {
+        res.status(403).json("You can delete only your post");
+      }
     } catch (err) {
       res.status(500).json(err);
     }
