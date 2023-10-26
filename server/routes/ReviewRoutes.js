@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
       user: new mongoose.Types.ObjectId(userId)  // Convert userId to an ObjectId
     });
     const savedReview = await newReview.save();
-    res.status(201).json({message: '${foodItem} has been reviewed with a score of ${rating}'});
+    res.status(201).json({message: `${foodItem} has been reviewed with a score of ${rating}`});
   } catch (error) {
     console.error(error);  // Log the error to the console
     res.status(500).json({ error: 'Unable to create the review.' });
