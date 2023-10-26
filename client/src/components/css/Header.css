@@ -1,10 +1,54 @@
-/* Hide the main menu and display the menu button on mobile screens */
-@media (max-width: 768px) {
-    .main-menu {
-      display: none;
-    }
-    .menu-button {
-      display: block;
-    }
-  }
-  
+.nav-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+.nav-left__ul {
+  display: flex;
+  align-items: center;
+}
+.nav-left li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-left: 2em;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+}
+.nav-right ul {
+  display: flex;
+  align-items: center;
+}
+.nav-right li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-left: 2em;
+}
+
+.nav-button {
+  background-color: #ff00d0;
+  color: #fff;
+  font-weight: 10px;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 200ms ease-in-out;
+}
+/* button hover styles */
+.nav-button:hover {
+  background-color: #bc019a;
+  transition: 200ms ease-in-out;
+}
