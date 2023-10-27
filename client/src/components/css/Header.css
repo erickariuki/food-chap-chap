@@ -1,8 +1,15 @@
 .nav-wrapper {
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
   display: flex;
+  padding: 5px;
+  position: fixed;
   align-items: center;
   justify-content: space-between;
-  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .nav-left {
@@ -37,7 +44,7 @@
 }
 
 .nav-button {
-  background-color: #ff00d0;
+  background-color: #eb6825;
   color: #fff;
   font-weight: 10px;
   border: none;
@@ -49,6 +56,6 @@
 }
 /* button hover styles */
 .nav-button:hover {
-  background-color: #bc019a;
+  background-color: #ce4806;
   transition: 200ms ease-in-out;
 }

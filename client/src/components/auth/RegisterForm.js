@@ -1,24 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import "../css/RegisterForm.css";
-
 
 function RegisterForm({ onSignUp }) {
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState({
-    username: '',
-    phone: '',
-    email: '',
-    address: '',
-    dateOfBirth: '',
+    username: "",
+    phone: "",
+    email: "",
+    address: "",
+    dateOfBirth: "",
   });
 
   const [passwordData, setPasswordData] = useState({
-    password: '',
-    passwordConfirmation: '',
+    password: "",
+    passwordConfirmation: "",
   });
 
-  const [userType, setUserType] = useState('customer');
+  const [userType, setUserType] = useState("customer");
   const [interests, setInterests] = useState([]);
 
   const handleNext = () => {
@@ -73,7 +72,7 @@ function RegisterForm({ onSignUp }) {
     switch (step) {
       case 1:
         return (
-          <div>
+          <div className="case">
             <label>Username:</label>
             <input
               type="text"
@@ -102,7 +101,7 @@ function RegisterForm({ onSignUp }) {
         );
       case 2:
         return (
-          <div>
+          <div className="case">
             <label>Address:</label>
             <input
               type="text"
@@ -122,7 +121,7 @@ function RegisterForm({ onSignUp }) {
         );
       case 3:
         return (
-          <div>
+          <div className="case">
             <label>Password:</label>
             <input
               type="password"
@@ -142,7 +141,7 @@ function RegisterForm({ onSignUp }) {
         );
       case 4:
         return (
-          <div>
+          <div className="case">
             <label>User Type:</label>
             <select
               name="userType"
@@ -173,18 +172,24 @@ function RegisterForm({ onSignUp }) {
   };
 
   return (
-    <div>
-      <h1>Create your Account</h1>
+    <div className="signUpForm-wrapper">
+      <h3>Create your Account</h3>
       <div className="form-step">
         {renderFormStep(step)}
-        <div className="button-container">
+        <div className="form-button__wrapper">
           {step > 1 && (
-            <button onClick={handlePrevious}>Previous</button>
+            <button className="form-button" onClick={handlePrevious}>
+              Previous
+            </button>
           )}
           {step < 4 ? (
-            <button onClick={handleNext}>Next</button>
+            <button className="form-button" onClick={handleNext}>
+              Next
+            </button>
           ) : (
-            <button onClick={handleSubmit}>Submit</button>
+            <button className="form-button" onClick={handleSubmit}>
+              Submit
+            </button>
           )}
         </div>
       </div>
