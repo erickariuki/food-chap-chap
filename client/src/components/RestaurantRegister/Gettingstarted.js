@@ -1,4 +1,5 @@
 import React from 'react';
+import '../css/gettingStarted.css';
 
 function GettingStarted() {
   return (

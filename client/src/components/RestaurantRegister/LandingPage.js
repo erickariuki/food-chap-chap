@@ -6,8 +6,11 @@ import JoinFoodChapChap from './JoinFoodChapChap'
 import FAQs from './FAQs'
 
 function LandingPage() {
+  const landingPageStyling = {
+    margin: '5em 10px',
+  };
   return (
-    <div>
+    <div style={landingPageStyling}>
         <HomeRegister />
         <WhyChoose />
         <GettingStarted />

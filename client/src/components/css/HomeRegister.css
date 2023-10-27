@@ -1,0 +1,21 @@
+.home-register-wrapper{
+  display: flex;
+  flex-direction: column;
+  gap:2em;
+  margin: 3px;
+  padding: 4px;
+}
+
+.home-register-wrapper h1 {
+  text-transform: none;
+  font-weight: bold;
+}
+
+
+.home-register-bottom{
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+/* touch /client/src/components/css/whyChoose.css /client/src/components/css/gettingStarted.css /client/src/components/css/joinFoodChapChap.css /client/src/components/css/faqs.css */

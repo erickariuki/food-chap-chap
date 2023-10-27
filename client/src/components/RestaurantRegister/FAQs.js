@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../css/faqs.css';
 
 function FAQs() {
   const [faqs, setFAQs] = useState([
