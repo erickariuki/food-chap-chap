@@ -7,7 +7,6 @@ export default async function Auth(req, res, next){
         
         // access authorize header to validate request
         const token = req.headers.authorization.split(" ")[1];
-        console.log("Received Token: " + token);
 
         if (!token){
             return res.status(401).json({ error : "Authentication Failed: Token not provided"})

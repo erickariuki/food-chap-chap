@@ -42,7 +42,7 @@ export async function registerUser (req, res) {
 // List all users
 export async function listUsers(req, res) {
   try {
-    const users = await User.find({}, "username email"); // You can select the fields you want to include
+    const users = await User.find({}, "username, email"); // You can select the fields you want to include
 
     res.status(200).json(users);
   } catch (error) {
@@ -57,7 +57,7 @@ export async function getUser(req, res) {
   try {
     const userId = req.params.id;
 
-    const user = await User.findById(userId, "username email"); // You can select the fields you want to include
+    const user = await User.findById(userId, "username, email"); // You can select the fields you want to include
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -125,7 +125,7 @@ export async function followUser(req, res){
     const userId = req.user.userId; //when userId is not stored in the token
 
     //update user's following list
-    const user = await User.findByIdAndUpdate(userId, {$push: {following: folowId}}, {new: true});
+    const user = await User.findByIdAndUpdate(userId, {$push: {following: followId}}, {new: true});
 
     if(!user){
       return res.status(404).json({error: "User not found"});
