@@ -2,6 +2,22 @@ import User from "../model/User.model.js";
 import Post from "../model/postModel.js";
 
 
+export async function createUser (req, res) {
+    try {
+      const newUser = new User(req.body);
+      const user = await newUser.save();
+      res.status(201).json(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+export function getAllUsers (req, res) {
+    User.find()
+      .then(users => res.json(users))
+      .catch(err => res.status(400).json("Error: " + err));
+  }
+
 export async function getUser (req, res) {
     try {
       const user = await User.findById(req.params.id);
