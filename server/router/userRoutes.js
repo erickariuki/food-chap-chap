@@ -1,14 +1,13 @@
 import express from "express";
-const router = express.Router();
 import Auth from "../middleware/auth.js";
-import { getUser, getAllUsers, createUser, followUser, unfollowUser, updateProfilePic, searchUsers }from "../controllers/userController.js";
+import { registerUser, loginUser, updateProfilePic, followUser, unfollowUser, searchUsers } from "../controllers/userController.js";
 
-router.get("/:id", Auth, getUser);
-router.get("/users", Auth, getAllUsers);
-router.post("/users", Auth, createUser);
-router.put("/follow/:id", Auth, followUser);
-router.put("/unfollow", Auth, unfollowUser);
-router.put("/updatepic", Auth, updateProfilePic);
-router.post("/search-users", Auth, searchUsers);
+const userRouter = express.Router();
+userRouter.post("/register", registerUser);
+userRouter.post("/login", loginUser);
+userRouter.put("/follow/:id", Auth, followUser);
+userRouter.put("/unfollow", Auth, unfollowUser);
+userRouter.put("/updatepic", Auth, updateProfilePic);
+userRouter.post("/search-users", Auth, searchUsers);
 
-export default router;
+export default userRouter;

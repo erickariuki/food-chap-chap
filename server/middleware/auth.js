@@ -9,6 +9,10 @@ export default async function Auth(req, res, next){
         const token = req.headers.authorization.split(" ")[1];
         console.log("Received Token: " + token);
 
+        if (!token){
+            return res.status(401).json({ error : "Authentication Failed: Token not provided"})
+        }
+
         // retrive the user details fo the logged in user
         const decodedToken = await jwt.verify(token, ENV.JWT_SECRET);
         console.log("Decoded Token: ", decodedToken);
