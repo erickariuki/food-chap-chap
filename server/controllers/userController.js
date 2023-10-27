@@ -35,9 +35,41 @@ export async function registerUser (req, res) {
 
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: error.message });
   }
 }
+
+// List all users
+export async function listUsers(req, res) {
+  try {
+    const users = await User.find({}, "username email"); // You can select the fields you want to include
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
+// Get user by ID
+export async function getUser(req, res) {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId, "username email"); // You can select the fields you want to include
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 
 //Login registered user
 export async function loginUser(req, res){

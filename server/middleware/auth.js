@@ -15,7 +15,7 @@ export default async function Auth(req, res, next){
 
         // retrive the user details fo the logged in user
         const decodedToken = await jwt.verify(token, ENV.JWT_SECRET);
-        console.log("Decoded Token: ", decodedToken);
+        console.log("Decoded Token: ", decodedToken)
 
         req.user = decodedToken;
 
