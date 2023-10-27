@@ -1,8 +1,62 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  AiOutlineHeart,
+  AiFillHeart,
+  AiOutlineStar,
+  AiFillStar,
+} from "react-icons/ai";
 
 function Restaurants({ restaurants }) {
-  console.log(restaurants);
+  const [restaurantList, setRestaurantList] = useState([]);
+  const [liked, setLiked] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(false);
+
+
+  
+
+  ///Restaurant status
+  const calculateStatus = (restaurant) => {
+    if (restaurant && restaurant.openingHours) {
+      if (restaurant.openingHours === "full time") {
+        return true;
+      } else {
+        const [start, end] = restaurant.openingHours.split("-").map((time) => {
+          const [hour, minute] = time.split(":").map(Number);
+          return hour * 60 + minute;
+        });
+
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTime = currentHour * 60 + currentMinute;
+
+        return currentTime >= start && currentTime <= end;
+      }
+    }
+
+    return false; // Default to false if no valid openingHours
+  };
+  //toggle like
+
+  //Fetch the restaurant data when the component mounts
+  useEffect(() => {
+    fetch("http://localhost:8080/restaurants")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("response not ok");
+        }
+        return response.json();
+      })
+      .then((list) => {
+        setRestaurantList(list.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
   return (
     <>
       <div className="main-section">
@@ -366,7 +420,30 @@ function Restaurants({ restaurants }) {
                       </div>
                     </div>
                     <div className="listing simple">
-                      <ul>
+                      {restaurantList.map((val) => (
+                        <div key={val.id}>
+                          {/* <img src={val.image} alt={(val.name, "logo")} /> */}
+                          {liked ? (
+                            <AiFillHeart onClick={() => setLiked(!liked)} />
+                          ) : (
+                            <AiOutlineHeart onClick={() => setLiked(!liked)} />
+                          )}
+                          <ul>{currentStatus}</ul>
+                          <AiFillStar />
+                          <AiFillStar />
+                          <AiFillStar />
+                          <AiFillStar />
+                          <AiFillStar />
+                          <ul>{calculateStatus(val) ? "Open" : "Closed"}</ul>
+                          <ul>{val.name}</ul>
+                          <ul>{val.location}</ul>
+                          <ul>{val.contact}</ul>
+                          <ul>Type of food:{val.cuisines}</ul>
+                          <button>VIEW MENU</button>
+                          <br />
+                        </div>
+                      ))}
+                      {/* <ul>
                         {restaurants.map((restaurant) => (
                           <li key={restaurant._id}>
                             <div className="img-holder">
@@ -449,7 +526,7 @@ function Restaurants({ restaurants }) {
                             </div>
                           </li>
                         ))}
-                      </ul>
+                      </ul> */}
                     </div>
 
                     <div className="row">
