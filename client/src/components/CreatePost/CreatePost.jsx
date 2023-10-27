@@ -7,12 +7,29 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './createpost.css';
 
 export default function CreatePost() {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const [postData, setPostData] = useState({
+    title: "",
+    body: "",
+    pic: "",
+  });
+
   const [file, setFile] = useState(null);
-  const [file2, setFile2] = useState(null);
-  const [title, setTitle] = useState('');
-  const [imagePreview, setImagePreview] = useState(null);
-  const [videoPreview, setVideoPreview] = useState(null);
+  const [video, setVideo] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const [videoPreview, setVideoPreview] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+    const response = await axios.post("/api/posts/createpost", postData);
+    console.log("Post created:", response.data);
+    // Handle success, e.g., show a success message to the user
+    } catch (error) {
+    console.error("Error creating post:", error);
+    // Handle error, e.g., show an error message to the user
+    }
+  };
+    
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -22,58 +39,60 @@ export default function CreatePost() {
 
   const handleVideoChange = (event) => {
     const selectedVideo = event.target.files[0];
-    setFile2(selectedVideo);
+    setVideo(selectedVideo);
     setVideoPreview(URL.createObjectURL(selectedVideo));
   };
 
-  const handlePost = async (e) => {
-    e.preventDefault();
-  
-    // Check if user is null
-    if (!user || !user.accessToken) {
-      // Handle the case where user is null or accessToken is missing
-      console.error('User data or access token is missing.');
-      // You can redirect to the login page or display an error message here
-      return;
-    }
-  
-    const formData = new FormData();
-    formData.append('title', title);
-    if (file) {
-      formData.append('image', file);
-    }
-    if (file2) {
-      formData.append('video', file2);
-    }
-  
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setPostData({ ...postData, [name]: value });
+  };
+
+  const handlePost = async () => {
     try {
-      const accessToken = user.accessToken;
-      await axios.post('http://localhost:5000/api/posts/createpost', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'token': accessToken
-        }
-      });
-      console.log(formData);
-      alert('Your Post was uploaded successfully');
-      window.location.reload(true);
+      const formData = new FormData();
+      formData.append('title', postData.title);
+      formData.append('body', postData.body);
+      formData.append('pic', postData.pic);
+      formData.append('file', file);
+      formData.append('file2', video);
+
+      const response = await axios.post("/api/posts/createpost", formData);
+      console.log("Post created:", response.data);
+      // Handle success, e.g., show a success message to the user
     } catch (error) {
-      console.error('Error occurred while uploading the post:', error);
+      console.error("Error creating post:", error);
+      // Handle error, e.g., show an error message to the user
     }
-  }
+  };
+
   return (
     <div>
       <div className='ContentUploadContainer'>
-        <div style={{ display: "flex", alignItems: "center", padding: 10, mt: [100] }}>
-          <AccountCircleIcon className="profileimage" />
-          {/* <span className='username'>${users.username}</span> */}
-          <input type="text" className='contentWritingpart' placeholder='Write your real thought.....' onChange={(e) => setTitle(e.target.value)} />
-        </div>
-        <div style={{ marginLeft: '10px' }}>
-          {imagePreview !== null ? <img src={imagePreview} style={{ width: "410px", height: '250px', objectFit: "cover", borderRadius: '10px' }} alt="" /> : videoPreview !== null ? <video className="PostImages" width="500" height="500" controls >
-            <source src={videoPreview} type="video/mp4" />
-          </video> : ''
-          }
+        <div>
+          <h2>Create a New Post</h2>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="title"
+              placeholder="Title"
+              value={postData.title}
+              onChange={handleInputChange}
+            />
+            <textarea
+              name="body"
+              placeholder="Post Content"
+              value={postData.body}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="pic"
+              placeholder="Image URL"
+              value={postData.pic}
+              onChange={handleInputChange}
+            />
+          </form>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div className='OtherIcons'>
               <label htmlFor='file'>
@@ -93,3 +112,4 @@ export default function CreatePost() {
     </div>
   );
 }
+

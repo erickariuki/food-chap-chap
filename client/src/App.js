@@ -136,7 +136,7 @@ axios.get('http://localhost:8080/restaurants')
   });
 
 
-  axios.get('http://localhost:8080/posts/allpost')
+  axios.get('http://localhost:8080/api/posts')
   .then((response) => {
     const posts = response.data;
     console.log(posts);

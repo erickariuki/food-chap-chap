@@ -5,7 +5,7 @@ import { getAllPosts, Timeline, getSubscribedPosts, createPost, getUserProfile,g
 import { upload } from '../middleware/upload.js';
 
 
-router.get("/allpost",  getAllPosts);
+router.get("/",  getAllPosts);
 router.get("/getsubpost", Auth, getSubscribedPosts);
 router.post('/createpost', Auth,  createPost);
 router.get("/mypost", Auth, getMyPosts);
