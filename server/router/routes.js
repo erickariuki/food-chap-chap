@@ -7,7 +7,7 @@ import passport from "passport";
 import * as controller from '../controllers/appController.js';
 import { registerMail } from '../controllers/mailer.js'
 import Auth, { localVariables } from '../middleware/auth.js';
-
+import { verifyUser } from "../controllers/appController.js";
 
 
 /** POST Methods */
@@ -33,7 +33,7 @@ router.route(
   );
   
 /** GET Methods */
-router.route('/user/:username').get(controller.getUser) // user with username
+router.route('/user').get(verifyUser, controller.getUser);
 router.route('/generateOTP').get(controller.verifyUser, localVariables, controller.generateOTP) // generate random OTP
 router.route('/verifyOTP').get(controller.verifyUser, controller.verifyOTP) // verify generated OTP
 router.route('/createResetSession').get(controller.createResetSession) // reset all the variables

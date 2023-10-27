@@ -4,19 +4,33 @@ import jwt from 'jsonwebtoken';
 import ENV from '../config.js'
 import otpGenerator from 'otp-generator';
 
-/** middleware for verify user */
 export async function verifyUser(req, res, next){
     try {
-        
-        const { username } = req.method == "GET" ? req.query : req.body;
+        const { username, password } = req.body; // Assuming you pass the username and password during authentication
 
-        // check the user existance
-        let exist = await UserModel.findOne({ username });
-        if(!exist) return res.status(404).send({ error : "Can't find User!"});
-        next();
+        if (!username || !password) {
+            return res.status(400).send({ error: "Username and password are required" });
+        }
+
+        // Check the user's credentials
+        UserModel.findOne({ username })
+            .then(user => {
+                bcrypt.compare(password, user.password)
+                    .then(passwordCheck => {
+                        if (!passwordCheck) return res.status(401).send({ error: "Invalid credentials" });
+                        req.user = user; // Attach the user object to the request for later use
+                        next();
+                    })
+                    .catch(error => {
+                        return res.status(400).send({ error: "Password does not match" });
+                    });
+            })
+            .catch(error => {
+                return res.status(404).send({ error: "Username not found" });
+            });
 
     } catch (error) {
-        return res.status(404).send({ error: "Authentication Error"});
+        return res.status(500).send({ error: "Authentication Error" });
     }
 }
 
@@ -71,72 +85,76 @@ export async function register(req, res) {
   "password" : "admin123"
 }
 */
-export async function login(req,res){
-   
+export async function login(req, res) {
     const { username, password } = req.body;
-
+  
     try {
-        
-        UserModel.findOne({ username })
-            .then(user => {
-                bcrypt.compare(password, user.password)
-                    .then(passwordCheck => {
-
-                        if(!passwordCheck) return res.status(400).send({ error: "Don't have Password"});
-
-                        // create jwt token
-                        const token = jwt.sign({
-                                        userId: user._id,
-                                        username : user.username
-                                    }, ENV.JWT_SECRET , { expiresIn : "24h"});
-
-                        return res.status(200).send({
-                            msg: "Login Successful...!",
-                            username: user.username,
-                            token
-                        });                                    
-
-                    })
-                    .catch(error =>{
-                        return res.status(400).send({ error: "Password does not Match"})
-                    })
+      UserModel.findOne({ username })
+        .then(user => {
+          bcrypt.compare(password, user.password)
+            .then(passwordCheck => {
+              if (!passwordCheck) return res.status(400).send({ error: "Password does not match" });
+  
+              // Create a JWT token with additional user details
+              const token = jwt.sign({
+                userId: user._id,
+                username: user.username,
+                user_type: user.user_type,
+                email: user.email,
+                profilePic: user.profilePic,
+                followers: user.followers,
+                following: user.following,
+                profile: user.profile,
+              }, ENV.JWT_SECRET, { expiresIn: "24h" });
+  
+              // Return a response with the user's details and the token
+              return res.status(200).send({
+                msg: "Login Successful...!",
+                user: {
+                  username: user.username,
+                  email: user.email,
+                  user_type:user.user_type,
+                  profilePic: user.profilePic,
+                  followers: user.followers,
+                  following: user.following,
+                  profile: user.profile,
+                },
+                token,
+              });
+  
             })
-            .catch( error => {
-                return res.status(404).send({ error : "Username not Found"});
+            .catch(error => {
+              return res.status(400).send({ error: "Password does not match" });
             })
-
+        })
+        .catch(error => {
+          return res.status(404).send({ error: "Username not found" });
+        });
+  
     } catch (error) {
-        return res.status(500).send({ error});
+      return res.status(500).send({ error });
     }
-}
+  }
+  
 
 
-/** GET: http://localhost:8080/api/user/example123 */
-export async function getUser(req,res){
-    
-    const { username } = req.params;
-
+/** GET: http://localhost:8080/api/user */
+export async function getUser(req, res) {
     try {
-        if (!username) return res.status(501).send({ error: "Invalid Username" });
-    
-        const user = await UserModel.findOne({ username });
-    
-        if (!user) {
-            return res.status(404).send({ error: "User not found" });
-        }
-    
+        if (!req.user) return res.status(401).send({ error: "Authentication required" });
+
+        // The user object is attached to the request, so you can access it directly
+        const user = req.user;
+
         // Remove password from user
         const { password, ...rest } = user.toJSON();
-    
-        return res.status(201).send(rest);
+
+        return res.status(200).send(rest);
     } catch (error) {
         console.error("Error:", error);
         return res.status(500).send({ error: "An error occurred" });
     }
-    
-
 }
-
 
 /** PUT: http://localhost:8080/api/updateuser 
  * @param: {

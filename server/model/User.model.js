@@ -11,6 +11,10 @@ const userSchema = mongoose.Schema(
             required: true,
             unique: true
         },
+        user_type: {
+            type: String,
+            enum: ["admin", "customer", "restaurant_owner"], // Use enum for allowed values
+        },
         email: {
             type: String,
             required: true,

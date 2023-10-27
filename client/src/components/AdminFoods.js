@@ -2,39 +2,39 @@ import React, { useEffect, useState } from 'react'
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 
-function AdminFoods() {
-	const [userr, setUserr] = useState(null);
+function AdminFoods({user}) {
+	// const [userr, setUserr] = useState(null);
 	const [restaurant, setRestaurant] = useState([]);
-	const [foods, setFoods] = useState([]);
+	const [menus, setMenus] = useState([]);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [message, setMessage] = useState('');
   
-	useEffect(() => {
-	  fetch('/me')
-		.then((response) => response.json())
-		.then((user) => setUserr(user));
-	}, []);
+	// useEffect(() => {
+	//   fetch('/me')
+	// 	.then((response) => response.json())
+	// 	.then((user) => setUserr(user));
+	// }, []);
   
 	useEffect(() => {
-		fetch(`/foods`)
+		fetch(`http://localhost:8080/menus`)
 		  .then((response) => response.json())
-		  .then((rest) => {
-			setFoods(rest);
+		  .then((restaurant) => {
+			setMenus(restaurant);
 		  });
 	}, []);
   
-	if (userr && userr.user_type !== 'admin') {
+	if (user && user.user_type !== 'admin') {
 	  window.location.href = '../';
 	}
   
 	function handleDeleteFood(id) {
-	  fetch(`/foods/${id}`, {
+	  fetch(`http://localhost:8080/menu/${username}`, {
 		method: 'DELETE',
 	  })
 		.then((response) => {
 		  if (response.ok) {
-			const updatedFoods = foods.filter((food) => food.id !== id);
-			setFoods(updatedFoods);
+			const updatedFoods = menus.filter((menu) => menu.restaurant !== restaurant);
+			setMenus(updatedFoods);
   
 			setIsSuccess(true);
 			setMessage('Food deleted successfully!');
@@ -51,9 +51,9 @@ function AdminFoods() {
 
 	return (
 	  <>
-	   {userr && (
+	   {user && (
     		<div className="main-section">
-<AdminHeader userr={userr}/>
+<AdminHeader user={user}/>
 			<div className="page-section account-header buyer-logged-in">
 				<div className="container">
 					<div className="row">

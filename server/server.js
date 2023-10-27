@@ -1,102 +1,81 @@
-import express, { request, response } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import session from 'express-session';
+import crypto from 'crypto';
+import morgan from 'morgan';
+import passport from 'passport';
 import restaurantRoutes from './router/restaurantRoutes.js';
-import menuRoutes from './router/menuRoutes.js';
 import orderRoutes from './router/orderRoutes.js';
 import connect from './database/conn.js';
 import router from './router/routes.js';
-import morgan from 'morgan';
-import passport from 'passport';
-import pkg from 'passport';
-import session from 'express-session';
-import crypto from 'crypto';
-
-// Create an Express application
-
-// import mongoDBURL from './config.js';
-
 import userRouter from './router/userRoutes.js';
 import postRouter from './router/postRoutes.js';
 import blogRouter from './router/blogRoutes.js';
-
-
+import cuisineRouter from './router/cuisineRoutes.js';
+import bookingRouter from './router/bookingRoute.js';
+import foodRouter from './router/foodRoutes.js';
+// Create an Express application
 const app = express();
+
+// Generate a random secret key for your sessions
 const secretKey = crypto.randomBytes(32).toString('hex');
-// Middleware for handling CORS
+
+// Middleware for handling CORS (configure with your allowed origins)
+// app.use(cors({
+//   origin: ['http://localhost:4000', 'http://localhost:8080'],
+//   methods: ['GET', 'PUT', 'POST', 'DELETE'],
+//   allowedHeaders: ['Content-Type'],
+// }));
 app.use(cors({ origin: 'http://localhost:4000' }));
-app.use(
-    cors({
-        origin: 'http://localhost:8080', // Replace with your allowed origin
-        methods: ['GET', 'POST', 'DELETE'],
-        allowedHeaders: ['Content-Type'],
-    })
-);
-app.use(cors());
+
 
 // Middleware to parse JSON in request bodies
 app.use(express.json());
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
-app.use(morgan("tiny"));
-app.disable("x-powered-by");
+app.use(express.urlencoded({ extended: false }));
+app.use(morgan('tiny'));
+app.disable('x-powered-by');
 app.set('view engine', 'ejs');
 
-
+// Session middleware for Passport.js
 app.use(
-    session({
-        secret: secretKey,
-        resave: false,
-        saveUninitialized: true,
-    })
+  session({
+    secret: secretKey,
+    resave: false,
+    saveUninitialized: true,
+  })
 );
-
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-
-
-const port = 8080
-// start server only when mongodb connected
-
-
-
-// Basic route for the root URL
-app.get('/', (req, res) => {
-    res.status(200).send('Welcome to your food store application');
-});
-
 // Define your routes
 app.use('/restaurants', restaurantRoutes);
-app.use('/menus', menuRoutes);
+
 app.use('/orders', orderRoutes);
 
-// API ROUTES
-app.use("/api", router);
-app.use("/api/users", userRouter)
-app.use('/api/posts', postRouter),
-app.use('/api/blogs', blogRouter)
-
-app.get("/", (req, res) => {
-    res.render("/http://localhost:4000")
+// API Routes
+app.use('/api', router);
+app.use('/api/foods', foodRouter);
+app.use('/api/users', userRouter);
+app.use('/api/posts', postRouter);
+app.use('/api/blogs', blogRouter);
+app.use('/api/cuisines', cuisineRouter);
+app.use('/api/bookings', bookingRouter);
+// Basic route for the root URL
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to your food store application');
 });
 
-
-//Auth with google
-app.get("/", (req, res) => {
-    res.render("http://localhost:4000/auth/google");
-});
-connect().then(() => {
-    try {
-        app.listen(port,() => {
-            console.log(` Server connected to http://localhost:${port}`);
-        }) 
-    }
-    catch(error){
-        console.log(` Server not listening on http://localhost:${port}`);
-    }
-});
-
+// MongoDB connection and server start
+const port = 8080;
+connect()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server connected to http://localhost:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.log(`Server not listening on http://localhost:${port}`);
+    console.error(error);
+  });

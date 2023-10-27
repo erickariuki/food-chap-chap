@@ -1,6 +1,6 @@
 import React from 'react'
 
-function AdminHeader({userr}) {
+function AdminHeader({user}) {
   return (
     <div className="page-section restaurant-detail-image-section"   style={{
         background: `url(${process.env.PUBLIC_URL}/assets/extra-images/cover-photo01.jpg) no-repeat scroll 0 0 / cover`,
@@ -18,7 +18,7 @@ function AdminHeader({userr}) {
 									</div>
 
 									<div className="text-holder">
-										<span className="restaurant-title" style={{textTransform:"capitalize"}}>{userr.username}( Admin)</span>
+										<span className="restaurant-title" style={{textTransform:"capitalize"}}>{user.username}( Admin)</span>
 										<div className="text">
 											<i className="icon-local_pizza"></i>
 										</div>

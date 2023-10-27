@@ -2,33 +2,43 @@ import React, { useEffect, useState } from 'react'
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 
-function AdminDash() {
-	const [userr, setUserr] = useState(null);
+function AdminDash({user}) {
+	// const [user, setuser] = useState(null);
 	const [orders, setOrders] = useState([]);
+	// const [user, setUser] = useState();
   
-	useEffect(() => {
-	  fetch("/me")
-		.then((response) => response.json())
-		.then((user) => setUserr(user));
-	}, []);
-  
+	// useEffect(() => {
+	// 	axios
+	// 		.get('http://localhost:8080/api/user', {
+	// 			withCredentials: true, // Include credentials (cookies, etc.)
+	// 		})
+	// 		.then((response) => {
+	// 			setUser(response.data);
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error(error);
+	// 			// Handle error or redirect to login
+	// 		});
+	// }, []);
+
 	useEffect(() => {
 		fetch(`/orders`)
 		  .then((response) => response.json())
 		  .then((orders) => setOrders(orders));
 	}, []);
 
-if (userr) {
-	if (userr.user_type !== "admin") {
-		window.location.href = "../";
+console.log(user);
+if (user) {
+	if (user.user_type !== "admin") {
+		window.location.href = "../notanadmin"
 	  }
 }
 
 	return (
 	  <>
-	   {userr && (
+	   {user && (
     		<div className="main-section">
-		<AdminHeader userr={userr}/>
+		<AdminHeader user={user}/>
 			<div className="page-section account-header buyer-logged-in">
 				<div className="container">
 					<div className="row">

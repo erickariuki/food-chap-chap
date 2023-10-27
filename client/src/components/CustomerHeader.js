@@ -1,6 +1,6 @@
 import React from 'react'
 
-function CustomerHeader({ userr }) {
+function CustomerHeader({ user }) {
   return (
     <div className="page-section restaurant-detail-image-section"    style={{
         background: `url(${process.env.PUBLIC_URL}/assets/extra-images/banner-img-2.jpg) no-repeat scroll 0 0 / cover`,
@@ -16,10 +16,10 @@ function CustomerHeader({ userr }) {
 										</figure>
 									</div>
 									<div className="text-holder">
-										<span className="restaurant-title" style={{textTransform:"capitalize"}}>{userr.username}(Customer Owner)</span>
+										<span className="restaurant-title" style={{textTransform:"capitalize"}}>{user.username}(Customer Owner)</span>
 										<ul className="user-info-contact">
-											<li className="cell"><i className="icon-phone"></i><a href="tel:0123456789">{userr.phone}</a></li>
-											<li className="email"><i className="icon-mail5"></i><a href="mailto:dum4@foodchapchap.com">{userr.email}</a></li>
+											<li className="cell"><i className="icon-phone"></i><a href="tel:0123456789">{user.phone}</a></li>
+											<li className="email"><i className="icon-mail5"></i><a href="mailto:dum4@foodchapchap.com">{user.email}</a></li>
 										</ul>
 									</div>
 								</div>

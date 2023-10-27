@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 
-function AdminAddfood() {
-  const [userr, setUserr] = useState(null);
+function AdminAddfood({ user  }) {
+  // const [userr, setUserr] = useState(null);
   const [restaurant, setRestaurant] = useState([]);
   const [cuisines, setCuisines] = useState([]);
 
@@ -19,18 +19,18 @@ function AdminAddfood() {
   const [message, setMessage] = useState('');
 
 
-  useEffect(() => {
-    fetch("/me")
-      .then((response) => response.json())
-      .then((user) => {
-        setUserr(user);
+  // useEffect(() => {
+  //   fetch("/me")
+  //     .then((response) => response.json())
+  //     .then((user) => {
+  //       setUserr(user);
        
-      });
-  }, []);
+  //     });
+  // }, []);
 
 
   useEffect(() => {
-      fetch(`/cuisines`)
+      fetch(`http://localhost:8080/api/cuisines`)
         .then((response) => response.json())
         .then((cuisines) => setCuisines(cuisines));
   }, []);
@@ -38,11 +38,11 @@ function AdminAddfood() {
 
   useEffect(() => {
     // Fetch user's restaurant when userr changes
-    if (userr) {
-      fetch(`/restaurants`)
+    if (user) {
+      fetch('http://localhost:8080/restaurants')
         .then((response) => response.json())
         .then((rest) => {
-          setRestaurant(rest);
+          setRestaurant(restaurant);
           setFormData((prevFormData) => ({
             ...prevFormData,
             restaurant_id: rest.id,
@@ -51,7 +51,7 @@ function AdminAddfood() {
           }));
         });
     }
-  }, [userr]);
+  }, [user]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -64,7 +64,7 @@ function AdminAddfood() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     // Send POST request
-    fetch('/foods', {
+    fetch('http://localhost:8080/menus', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -89,17 +89,17 @@ function AdminAddfood() {
       });
   };
 
-  if (userr) {
-    if (userr.user_type !== "admin") {
+  if (user) {
+    if (user.user_type !== "admin") {
       window.location.href = "../";
     }
   }
 
 	return (
 	  <>
-	   {userr && (
+	   {user && (
     		<div className="main-section">
-<AdminHeader userr={userr}/>
+<AdminHeader user={user}/>
 			<div className="page-section account-header buyer-logged-in">
 				<div className="container">
 					<div className="row">

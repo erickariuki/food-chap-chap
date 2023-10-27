@@ -2,29 +2,29 @@ import React, { useEffect, useState } from 'react'
 import RestaurantSidebar from './RestaurantSidebar';
 import RestaurantHeader from './RestaurantHeader';
 
-function RestaurantPassword() {
-	const [userr, setUserr] = useState(null);
+function RestaurantPassword({user}) {
+	// const [userr, setUserr] = useState(null);
 	const [restaurant, setRestaurant] = useState([]);
   
-	useEffect(() => {
-	  // Fetch user information
-	  fetch("/me")
-		.then((response) => response.json())
-		.then((user) => setUserr(user));
-	}, []);
+	// useEffect(() => {
+	//   // Fetch user information
+	//   fetch("/me")
+	// 	.then((response) => response.json())
+	// 	.then((user) => setUserr(user));
+	// }, []);
   
 	useEffect(() => {
 	  // Fetch user's orders when userr changes
-	  if (userr) {
-		fetch(`/restaurants/${userr.id}`)
+	  if (user) {
+		fetch(`/restaurants/${user.id}`)
 		  .then((response) => response.json())
 		  .then((rest) => setRestaurant(rest));
 	  }
-	}, [userr]);
+	}, [user]);
 
-if (userr) {
+if (user) {
 	
-	if (userr.user_type !== "restaurant_owner") {
+	if (user.user_type !== "restaurant_owner") {
 		window.location.href = "../";
 	  }
 }
@@ -45,9 +45,9 @@ if (userr) {
 
 	return (
 	  <>
-	   {userr && (
+	   {user && (
     		<div className="main-section">
-		<RestaurantHeader userr={userr}/>
+		<RestaurantHeader user={user}/>
 			<div className="page-section account-header buyer-logged-in">
 				<div className="container">
 					<div className="row">
