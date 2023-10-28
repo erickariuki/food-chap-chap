@@ -9,13 +9,101 @@ import {
 } from "react-icons/ai";
 
 function Restaurants({ restaurants }) {
+  //state hooks
   const [restaurantList, setRestaurantList] = useState([]);
   const [liked, setLiked] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(false);
+  const [checkedMenu, setCheckedMenu] = useState([]);
+  const [restaurantWithItems, setRestaurantsWithItems] = useState([]);
+  const [cuisines, setCuisines] = useState([
+    "Apple Juice",
+    "BB.Q",
+    "Beef Roast",
+    "Carrot Juice",
+    "Cheese Burger",
+    "Chicken Roast",
+  ]);
+  const findRestaurants = (updatedCheckedMenu) => {
+    const associatedRestaurants = [];
 
+    if (updatedCheckedMenu.length === 0) {
+      // If no checkboxes are selected, show all restaurants
+      restaurantList.forEach((restaurant) => {
+        associatedRestaurants.push({ ...restaurant }); // Push entire restaurant object
+      });
+    } else {
+      restaurantList.forEach((restaurant) => {
+        const menuItems = restaurant.cuisines;
 
-  
+        if (
+          menuItems &&
+          updatedCheckedMenu.every((item) => menuItems.includes(item))
+        ) {
+          associatedRestaurants.push({ ...restaurant }); // Push entire restaurant object
+        }
+      });
+    }
 
+    setRestaurantsWithItems(associatedRestaurants);
+  };
+  const handleCheckboxChange = (event) => {
+    const menuItem = event.target.value;
+    const updatedMenu = [...checkedMenu];
+    // console.log(checkedMenu);
+    console.log(menuItem);
+    if (event.target.checked) {
+      updatedMenu.push(menuItem);
+    } else {
+      const index = updatedMenu.indexOf(menuItem);
+      if (index > -1) {
+        updatedMenu.splice(index, 1);
+      }
+    }
+
+    setCheckedMenu(updatedMenu);
+    findRestaurants(updatedMenu);
+  };
+  //sort logic
+  const sortByAlphabet = () => {
+    const sortedArray = [...restaurantWithItems].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+    setRestaurantsWithItems(sortedArray);
+  };
+  const sortByRatings = () => {
+    const sortedArray = [...restaurantWithItems].sort((a, b) => {
+      const averageRatingA = calculateAverage(a.ratings);
+      const averageRatingB = calculateAverage(b.ratings);
+      return averageRatingB - averageRatingA;
+    });
+    setRestaurantsWithItems(sortedArray);
+  };
+
+  function calculateAverage(ratings) {
+    if (ratings.length === 0) return 0;
+    const sum = ratings.reduce((total, rating) => total + rating, 0);
+    return sum / ratings.length;
+  }
+  const sortByMinOrderValue = () => {
+    const sortedArray = [...restaurantWithItems].sort(
+      (a, b) => a.minimum_order_value - b.minimum_order_value
+    );
+    setRestaurantsWithItems(sortedArray);
+  };
+
+  const sortByDeliveryFee = () => {
+    const sortedArray = [...restaurantWithItems].sort(
+      (a, b) => a.delivery_fee - b.delivery_fee
+    );
+    setRestaurantsWithItems(sortedArray);
+  };
+
+  const sortByDeliveryTime = () => {
+    const sortedArray = [...restaurantWithItems].sort(
+      (a, b) => a.delivery_time - b.delivery_time
+    );
+    setRestaurantsWithItems(sortedArray);
+  };
   ///Restaurant status
   const calculateStatus = (restaurant) => {
     if (restaurant && restaurant.openingHours) {
@@ -39,6 +127,16 @@ function Restaurants({ restaurants }) {
     return false; // Default to false if no valid openingHours
   };
   //toggle like
+  // Assuming you have a state for the checkbox
+  const [showOpenOnly, setShowOpenOnly] = useState(false);
+
+  const handleOpenClose = () => {
+    setShowOpenOnly((prev) => !prev);
+  };
+
+  const sortedAndFilteredRestaurants = restaurantList
+    .filter((restaurant) => !showOpenOnly || calculateStatus(restaurant))
+    .sort((a, b) => b.ratings - a.ratings);
 
   //Fetch the restaurant data when the component mounts
   useEffect(() => {
@@ -203,7 +301,37 @@ function Restaurants({ restaurants }) {
                           </div>
                           <div className="select-categories">
                             <ul className="filter-list cs-checkbox-list">
-                              <li>
+                              {cuisines.map((item) => (
+                                <div className="checkbox" key={item}>
+                                  <input
+                                    type="checkbox"
+                                    id={`foodbakery_restaurant_category_${item}`}
+                                    className="foodbakery_restaurant_category"
+                                    value={item}
+                                    onChange={handleCheckboxChange}
+                                  />
+                                  <label
+                                    for={`foodbakery_restaurant_category_${item}`}
+                                  >
+                                    {item}
+                                  </label>
+                                </div>
+                              ))}
+                              {/* {menuItems.map((menuItem) => (
+                                <div className="checkbox" key={menuItem}>
+                                  <input
+                                    type="checkbox"
+                                    id={`foodbakery_${menuItem}`}
+                                    className="foodbakery_restaurant_category"
+                                    value={menuItem}
+                                    // onChange={handleCheckboxChange}
+                                  />
+                                  <label htmlFor={`foodbakery_${menuItem}`}>
+                                    {menuItem}
+                                  </label>
+                                </div>
+                              ))} */}
+                              {/* <li>
                                 <div className="checkbox">
                                   <input
                                     type="checkbox"
@@ -286,7 +414,7 @@ function Restaurants({ restaurants }) {
                                   </label>
                                   <span>(2)</span>
                                 </div>
-                              </li>
+                              </li> */}
                               <li className="expand">See more cuisines</li>
                             </ul>
                           </div>
@@ -420,7 +548,7 @@ function Restaurants({ restaurants }) {
                       </div>
                     </div>
                     <div className="listing simple">
-                      {restaurantList.map((val) => (
+                      {restaurantWithItems.map((val) => (
                         <div key={val.id}>
                           {/* <img src={val.image} alt={(val.name, "logo")} /> */}
                           {liked ? (
@@ -435,6 +563,7 @@ function Restaurants({ restaurants }) {
                           <AiFillStar />
                           <AiFillStar />
                           <ul>{calculateStatus(val) ? "Open" : "Closed"}</ul>
+                          <ul>{val.openingHours}</ul>
                           <ul>{val.name}</ul>
                           <ul>{val.location}</ul>
                           <ul>{val.contact}</ul>
@@ -554,7 +683,7 @@ function Restaurants({ restaurants }) {
                   </div>
                   <div className="section-sidebar col-lg-3 col-md-3 col-sm-12 col-xs-12">
                     <div className="order-sort-results">
-                      <h5>Sort By</h5>
+                      <h5>Sort By </h5>
                       <ul>
                         <li className="active">
                           <a href="#" className="sort-by-best_match">
@@ -562,29 +691,49 @@ function Restaurants({ restaurants }) {
                           </a>
                         </li>
                         <li>
-                          <a href="#" className="sort-by-alphabetical">
+                          <a
+                            href="#"
+                            className="sort-by-alphabetical"
+                            onClick={sortByAlphabet}
+                          >
                             <i className="icon-sort-alpha-asc"></i>Alphabetical
                           </a>
                         </li>
                         <li>
-                          <a href="#" className="sort-by-ratings">
+                          <a
+                            href="#"
+                            className="sort-by-ratings"
+                            onClick={sortByRatings}
+                          >
                             {" "}
                             <i className="icon-star-o"></i>Ratings
                           </a>
                         </li>
                         <li>
-                          <a href="#" className="sort-by-minimum_order_value">
+                          <a
+                            href="#"
+                            className="sort-by-minimum_order_value"
+                            onClick={sortByMinOrderValue}
+                          >
                             <i className="icon-user-minus"></i>Minimum order
                             value
                           </a>
                         </li>
                         <li>
-                          <a href="#" className="sort-by-delivery_fee">
+                          <a
+                            href="#"
+                            className="sort-by-delivery_fee"
+                            onClick={sortByDeliveryFee}
+                          >
                             <i className="icon-dollar"></i>Delivery fee
                           </a>
                         </li>
                         <li>
-                          <a href="#" className="sort-by-fastest_delivery">
+                          <a
+                            href="#"
+                            className="sort-by-fastest_delivery"
+                            onClick={sortByDeliveryTime}
+                          >
                             <i className="icon-fast-forward"></i>Fastest
                             delivery
                           </a>
