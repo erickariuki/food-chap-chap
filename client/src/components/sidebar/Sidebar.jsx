@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import './sidebar.css';
 import {
   RssFeed,
@@ -10,59 +11,64 @@ import VibrationIcon from '@mui/icons-material/Vibration';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-// import Feed from '../feed/Feed.jsx'
+import Feed from '../feed/Feed'
+
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
   return (
-    <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className="sidebar">
       <div className="sidebarWrapper">
         <ul className="sidebarList">
-          <button className="sidebarListItem">
-            <RssFeed className="sidebarIcon" />
-            <span className="sidebarListItemText">
-              Feed
-              </span>
-          </button>
-          <button className="sidebarListItem">
-            <Chat className="sidebarIcon" />
-            <span className="sidebarListItemText">
-              Chats
-              </span>
-          </button>
-          <button className="sidebarListItem">
-            <Group className="sidebarIcon" />
-            <span className="sidebarListItemText">Following</span>
-          </button>
-          <button className="sidebarListItem">
-            <VibrationIcon className="sidebarIcon" />
-            <span className="sidebarListItemText">Notifications</span>
-          </button>
-          <button className="sidebarListItem">
-            <AddCircleOutlineIcon className="sidebarIcon" />
-            <span className="sidebarListItemText">Upload</span>
-          </button>
-          <button className="sidebarListItem">
-            <AccountCircleIcon className="sidebarIcon" />
-            <span className="sidebarListItemText">Profile</span>
-          </button>
-          <button className="sidebarListItem">
-            <SettingsIcon className="sidebarIcon" />
-            <span className="sidebarListItemText">Settings</span>
-          </button>
-          <button className="sidebarListItem">
-            <FlagIcon className="sidebarIcon" />
-            <span className="sidebarListItemText">Report</span>
-          </button>
+          <li className="sidebarListItem">
+            <Link to="/Feed">
+              <RssFeed className="sidebarIcon" />
+              <span className="sidebarListItemText">Feed</span>
+            </Link>
+          </li>
+          <li className="sidebarListItem">
+            <Link to="/Chats">
+              <Chat className="sidebarIcon" />
+              <span className="sidebarListItemText">Chats</span>
+            </Link>
+          </li>
+          <li className="sidebarListItem">
+            <Link to="/Following">
+              <Group className="sidebarIcon" />
+              <span className="sidebarListItemText">Following</span>
+            </Link>
+          </li>
+          <li className="sidebarListItem">
+            <Link to="/Notifications">
+              <VibrationIcon className="sidebarIcon" />
+              <span className="sidebarListItemText">Notifications</span>
+            </Link>
+          </li>
+          <li className="sidebarListItem">
+            <Link to="/Upload">
+              <AddCircleOutlineIcon className="sidebarIcon" />
+              <span className="sidebarListItemText">Upload</span>
+            </Link>
+          </li>
+          <li className="sidebarListItem">
+            <Link to="/Profile">
+              <AccountCircleIcon className="sidebarIcon" />
+              <span className="sidebarListItemText">Profile</span>
+            </Link>
+          </li>
+          <li className="sidebarListItem">
+            <Link to="/Settings">
+              <SettingsIcon className="sidebarIcon" />
+              <span className="sidebarListItemText">Settings</span>
+            </Link>
+          </li>
+          <li className="sidebarListItem">
+            <Link to="/Report">
+              <FlagIcon className="sidebarIcon" />
+              <span className="sidebarListItemText">Report</span>
+            </Link>
+          </li>
         </ul>
-        <button className="sidebarToggleBtn" onClick={toggleSidebar}>
-        {isCollapsed ? '☰' : '✖'}
-      </button>
       </div>
     </div>
   );
 }
+

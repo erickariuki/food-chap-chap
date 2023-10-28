@@ -1,5 +1,7 @@
 .rightbar {
-  flex: 3.5;
+  align-items: center;
+  margin-top: 50px;
+  text-align: center;
 }
 
 .rightbarWrapper {

@@ -14,7 +14,7 @@
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: large;
+  font-size: medium;
   color: black;
   margin-bottom: 20px;
 }
@@ -47,12 +47,12 @@
   /* show text on active/hover state */
 }
 .sidebar {
-  width: 200px;
+  width: 150px;
   height: 100vh;
   margin-top: 50px;
   background-color: red;
   transition: width 0.3s ease; /* add more properties for smoother transition */
-  position: relative;
+  position: fixed;
   color: none;
 }
 

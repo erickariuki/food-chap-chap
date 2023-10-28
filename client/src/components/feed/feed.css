@@ -10,8 +10,10 @@
     flex-direction: column;
     gap: 20px; /* Space between cards */
     padding: 20px; /* Padding around the feed */
-    flex: 4;
-    width: 65%;
+    width: 45%;
+    margin-left: 150px;
+    margin-top: 50px;
+    flex: 3.5;
   }
   
   .card {
@@ -20,7 +22,8 @@
     border: 1px solid #e0e0e0; /* Border around the card */
     border-radius: 10px; /* Rounded corners */
     overflow: hidden; /* Ensures the image doesn't overflow the rounded corners */
-    
+    width: 80%;
+    padding: 10px;
   }
   
   .card-img {
