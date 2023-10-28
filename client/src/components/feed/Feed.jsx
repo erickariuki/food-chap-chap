@@ -1,52 +1,52 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CreatePost from "../CreatePost/CreatePost"; // Import the CreatePosts component
-import Post from "../post/Post"; // Import the Posts component
+import './feed.css'
 
 const Feed = () => {
-  const [subscribedPosts, setSubscribedPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchSubscribedPosts = async () => {
+    const fetchPosts = async () => {
       try {
-        const response = await axios.get("/api/posts/getsubpost");
-        setSubscribedPosts(response.data);
-        setLoading(false);
+        const response = await axios.get("/api/posts");
+        if (Array.isArray(response.data.posts)) { // Ensure the data is an array
+          setPosts(response.data.posts);
+        } else {
+          console.error("Error: fetched data is not an array");
+        }
+        setLoading(false); // Set loading to false after data is fetched
       } catch (error) {
-        console.error("Error fetching subscribed posts:", error);
-        setError("Error fetching subscribed posts. Please try again later.");
-        setLoading(false);
+        console.error("Error fetching posts:", error);
+        setLoading(false); // Set loading to false in case of error
       }
     };
 
-    fetchSubscribedPosts();
-  }, []);
+    fetchPosts();
+  }, []); // Empty dependency array ensures useEffect runs once after initial render
 
   if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Loading...</div>; // Show loading message while data is being fetched
   }
 
   return (
-    <div>
-      <CreatePost /> {/* Render the CreatePosts component */}
-      <h2>Subscribed Posts</h2>
-      {subscribedPosts.map((post) => (
-        <div key={post._id}>
-          <h3>{post.title}</h3>
-          <p>{post.body}</p>
-          {post.pic && <img src={post.pic} alt="Post" />}
+    <div className="feed">
+      {posts.map((post) => (
+        <div className="card" key={post._id}>
+          <img className="card-img" src={post.image} alt="Post" />
+          <div className="card-body">
+            <h5 className="card-title">{post.title}</h5>
+            <p className="card-text">{post.content}</p>
+          </div>
+          <div className="card-footer">
+            <small>Posted by: {post.author}</small>
+          </div>
         </div>
       ))}
-      <Post /> {/* Render the Posts component */}
     </div>
   );
-};
+}
 
 export default Feed;
+
 

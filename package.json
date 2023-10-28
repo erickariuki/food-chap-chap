@@ -9,5 +9,26 @@
     "nodemon": "^3.0.1",
     "otp-generator": "^4.0.1",
     "react-router-dom": "^6.17.0"
-  }
+  },
+  "name": "food-chap-chap",
+  "description": "# Create A file in the Server Part Called Config.js \"Config.js\"",
+  "version": "1.0.0",
+  "main": "postcss.config.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node backend/server",
+    "server": "nodemon backend/server",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erickariuki/food-chap-chap.git#InstaFrank"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erickariuki/food-chap-chap/issues"
+  },
+  "homepage": "https://github.com/erickariuki/food-chap-chap/tree/InstaFrank#readme"
 }

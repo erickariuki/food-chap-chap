@@ -2,3 +2,49 @@
     flex: 3;
     
 }
+
+/* Feed.css */
+
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between cards */
+    padding: 20px; /* Padding around the feed */
+    flex: 4;
+    width: 65%;
+  }
+  
+  .card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0; /* Border around the card */
+    border-radius: 10px; /* Rounded corners */
+    overflow: hidden; /* Ensures the image doesn't overflow the rounded corners */
+    
+  }
+  
+  .card-img {
+    width: 100%; /* Makes the image take up the full width of the card */
+    height: 200px; /* Sets a static height */
+    object-fit: cover; /* Ensures the image covers the area without stretching */
+  }
+  
+  .card-body {
+    padding: 20px; /* Padding around the card content */
+  }
+  
+  .card-title {
+    margin-bottom: 10px; /* Space between the title and the text */
+    font-size: 24px; /* Make the title larger */
+  }
+  
+  .card-text {
+    flex-grow: 1; /* Makes the text area take up all available space */
+  }
+  
+  .card-footer {
+    padding: 10px 20px; /* Padding around the footer */
+    background-color: #f0f0f0; /* Background color for the footer */
+    font-size: 14px; /* Smaller font size for the footer */
+  }
+  
