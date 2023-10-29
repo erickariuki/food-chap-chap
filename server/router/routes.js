@@ -1,5 +1,6 @@
 import { Router } from "express";
 import bcrypt from 'bcrypt';
+import passport from "passport";
 import UserModel from '../model/User.model.js';
 import * as controller from '../controllers/appController.js';
 import { registerMail } from '../controllers/mailer.js';
