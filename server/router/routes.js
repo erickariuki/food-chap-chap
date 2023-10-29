@@ -8,6 +8,21 @@ import Auth, { localVariables } from '../middleware/auth.js';
 const router = Router();
 
 /** POST Methods */
+router.route(
+    '/auth/google',
+    passport.authenticate('google', {
+      scope: ['profile', 'email'], 
+    })
+  );
+  
+router.route(
+    '/auth/google/redirect',
+    passport.authenticate('google', {
+      successRedirect: '/', 
+      failureRedirect: '/login', 
+    })
+  );
+
 router.route('/register').post(controller.register); // Register user
 router.route('/registerMail').post(registerMail); // Send email for registration
 router.route('/authenticate').post(controller.verifyUser, (req, res) => res.end()); // Authenticate user
