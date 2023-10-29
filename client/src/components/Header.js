@@ -52,7 +52,7 @@ function Header({ user, onLogout }) {
             </li>
 
             {user ? (
-              <>
+              <div className="nav--buttons">
                 <li>
                   <NavLink to={`${location}`}>
                     {user.username}: {user.user_type}
@@ -68,9 +68,9 @@ function Header({ user, onLogout }) {
                     Logout
                   </button>
                 </li>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="nav--buttons">
                 <li>
                   <button
                     className="nav-button"
@@ -91,7 +91,7 @@ function Header({ user, onLogout }) {
                     Register Restaurant
                   </button>
                 </li>
-              </>
+              </div>
             )}
           </ul>
         </>
