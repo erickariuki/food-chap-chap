@@ -43,6 +43,11 @@
   margin-left: 2em;
 }
 
+.nav--buttons {
+  display: flex;
+  flex-direction: row;
+}
+
 .nav-button {
   background-color: #eb6825;
   color: #fff;
@@ -54,8 +59,15 @@
   font-size: 15px;
   transition: 200ms ease-in-out;
 }
-/* button hover styles */
+
 .nav-button:hover {
   background-color: #ce4806;
   transition: 200ms ease-in-out;
+}
+
+@media only screen and (max-width: 554px) {
+  .nav--buttons {
+    flex-direction: column;
+    gap: 3px;
+  }
 }

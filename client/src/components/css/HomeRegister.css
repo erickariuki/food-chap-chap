@@ -1,9 +1,11 @@
-.home-register-wrapper{
+.home-register-wrapper {
   display: flex;
   flex-direction: column;
-  gap:2em;
+  gap: 2em;
   margin: 3px;
   padding: 4px;
+  justify-content: flex-start;
+  width: 60%;
 }
 
 .home-register-wrapper h1 {
@@ -11,11 +13,40 @@
   font-weight: bold;
 }
 
-
-.home-register-bottom{
+.home-register-bottom {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: flex-start;
   gap: 50px;
+  margin-bottom: 5px;
+}
+.home-register-wrapper p {
+  font-size: medium;
+}
+.button {
+  width: 35%;
+  background-color: #eb6825;
+  font-weight: 50px;
+  border: none;
+  border-radius: 10px;
+  padding: 3px 2px;
+  cursor: pointer;
+  font-size: 20px;
+  transition: 200ms ease-in-out;
 }
 
-/* touch /client/src/components/css/whyChoose.css /client/src/components/css/gettingStarted.css /client/src/components/css/joinFoodChapChap.css /client/src/components/css/faqs.css */
+.button:hover {
+  background-color: #ce4806;
+  transition: 200ms ease-in-out;
+}
+
+@media only screen and (max-width: 412px) {
+  .home-register-wrapper {
+    margin-top: 40pz;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    justify-content: center;
+    width: 100%;
+  }
+}
