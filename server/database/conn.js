@@ -1,18 +1,16 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import ENV from '../config.js';
 
-import { MongoMemoryServer } from "mongodb-memory-server";
-import ENV from '../config.js'
-
-async function connect(){
-
-    const mongod = await MongoMemoryServer.create();
-    const getUri = mongod.getUri();
-
-    mongoose.set('strictQuery', true)
-    // const db = await mongoose.connect(getUri);
-    const db = await mongoose.connect(ENV.ATLAS_URI);
-    console.log("Database Connected")
-    return db;
+async function connect() {
+    try {
+        await mongoose.connect(ENV.ATLAS_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('Connected to MongoDB Atlas');
+    } catch (error) {
+        console.error('Failed to connect to MongoDB Atlas:', error);
+    }
 }
 
 export default connect;
