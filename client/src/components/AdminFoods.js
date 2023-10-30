@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
+import axios from 'axios';
 
 function AdminFoods({user}) {
 	// const [userr, setUserr] = useState(null);
 	const [restaurant, setRestaurant] = useState([]);
-	const [menus, setMenus] = useState([]);
+	const [foods, setFoods] = useState([]);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [message, setMessage] = useState('');
   
@@ -16,25 +17,35 @@ function AdminFoods({user}) {
 	// }, []);
   
 	useEffect(() => {
-		fetch(`http://localhost:8080/menus`)
-		  .then((response) => response.json())
-		  .then((restaurant) => {
-			setMenus(restaurant);
+		// Define the URL you want to fetch
+		const apiUrl = 'http://localhost:8080/api/foods';
+	
+		// Use Axios to make the GET request
+		axios.get(apiUrl)
+		  .then((response) => {
+			// Handle the response data and set the state
+			setFoods(response.data);
+		  })
+		  .catch((error) => {
+			console.error('Error fetching data:', error);
 		  });
-	}, []);
-  
+	  }, []); // The empty array as the second argument makes this effect run only once, similar to your original code.
+	
+	  console.log(foods);
+
+
 	if (user && user.user_type !== 'admin') {
 	  window.location.href = '../';
 	}
   
 	function handleDeleteFood(id) {
-	  fetch(`http://localhost:8080/menu/${username}`, {
+	  fetch(`/foods/${id}`, {
 		method: 'DELETE',
 	  })
 		.then((response) => {
 		  if (response.ok) {
-			const updatedFoods = menus.filter((menu) => menu.restaurant !== restaurant);
-			setMenus(updatedFoods);
+			const updatedFoods = foods.filter((food) => food.id !== id);
+			setFoods(updatedFoods);
   
 			setIsSuccess(true);
 			setMessage('Food deleted successfully!');
@@ -125,26 +136,23 @@ function AdminFoods({user}) {
 															{/* <div>Status</div> */}
 															<div>Detail</div>
 														</li>
-													
-													
 														{foods && foods.map((food, index) => (
-
-<>
-														<li key={index} className="order-heading-titles">
-															<div><a href="#" data-toggle="modal" data-target={`#order-det-${food.id}`}style={{textTransform:"capitalize"}}>{food.name}</a></div>
-															<div>{food.description}</div>
-                                                        	<div>ksh {food.price}</div>
-															{/* <div>£ 3.90</div>
-															<div>£ 35.09</div> */}
-															{/* <div><span className="order-status" style={{ backgroundColor: '#047a06' }} >Completed</span></div> */}
-															<div><button className='btn btn-sm btn-danger'     onClick={() => handleDeleteFood(food.id)} data-toggle="modal" data-target={`#order-det-${food.id}`}>DELETE</button></div>
-														</li>
-
-</>
-
-														))}			
-													
-												
+																<div key={food._id} className="order-heading-titles">
+																	<div>
+																	<a href="#" data-toggle="modal" data-target={`#order-det-${food._id}`} style={{ textTransform: "capitalize" }}>
+																		{food.name}
+																	</a>
+																	</div>
+																	<div>{food.description}</div>
+																	<div>ksh {food.price}</div>
+																	{/* You can add more information or elements as needed */}
+																	<div>
+																	<button className='btn btn-sm btn-danger' onClick={() => handleDeleteFood(food._id)} data-toggle="modal" data-target={`#order-det-${food._id}`}>
+																		DELETE
+																	</button>
+																	</div>
+																</div>
+																))}
 													</ul>
 
 												</div>

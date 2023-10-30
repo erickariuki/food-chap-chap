@@ -35,6 +35,7 @@ function AdminAddfood({ user  }) {
         .then((cuisines) => setCuisines(cuisines));
   }, []);
 
+// console.log(cuisines)
 
   useEffect(() => {
     // Fetch user's restaurant when userr changes
@@ -64,7 +65,7 @@ function AdminAddfood({ user  }) {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     // Send POST request
-    fetch('http://localhost:8080/menus', {
+    fetch('http://localhost:8080/api/foods', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

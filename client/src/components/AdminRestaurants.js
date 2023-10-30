@@ -2,33 +2,33 @@ import React, { useEffect, useState } from 'react'
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 
-function AdminRestaurants() {
-	const [userr, setUserr] = useState(null);
+function AdminRestaurants({user}) {
+	// const [userr, setUserr] = useState(null);
 	const [restaurants, setRestaurants] = useState([]);
   
-	useEffect(() => {
-	  fetch("/me")
-		.then((response) => response.json())
-		.then((user) => setUserr(user));
-	}, []);
+	// useEffect(() => {
+	//   fetch("/me")
+	// 	.then((response) => response.json())
+	// 	.then((user) => setUserr(user));
+	// }, []);
   
 	useEffect(() => {
-		fetch(`/restaurants`)
+		fetch(`http://localhost:8080/restaurants`)
 		  .then((response) => response.json())
 		  .then((restaurants) => setRestaurants(restaurants));
 	}, []);
 
-if (userr) {
-	if (userr.user_type !== "admin") {
+if (user) {
+	if (user.user_type !== "admin") {
 		window.location.href = "../";
 	  }
 }
 
 	return (
 	  <>
-	   {userr && (
+	   {user && (
     		<div className="main-section">
-<AdminHeader userr={userr}/>
+<AdminHeader user={user}/>
 			<div className="page-section account-header buyer-logged-in">
 				<div className="container">
 					<div className="row">
