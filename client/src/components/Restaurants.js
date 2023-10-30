@@ -15,6 +15,98 @@ function Restaurants({ restaurants }) {
   const [currentStatus, setCurrentStatus] = useState(false);
   const [checkedMenu, setCheckedMenu] = useState([]);
   const [restaurantWithItems, setRestaurantsWithItems] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [close, setClose] = useState(false);
+
+  useEffect(() => {
+    let openRestaurants = [];
+    if (open === true && close === true && checkedMenu.length === 0) {
+      setRestaurantsWithItems(restaurantList);
+      console.log("123");
+    }
+    if (open == true && close == false && checkedMenu.length === 0) {
+      restaurantList.forEach((restaurant) => {
+        const isOpen = calculateStatus(restaurant);
+        if (isOpen === true) {
+          openRestaurants.push(restaurant);
+        }
+      });
+      setRestaurantsWithItems(openRestaurants);
+    }
+    if (open == false && close == true && checkedMenu.length === 0) {
+      let closedRestaurants = [];
+      restaurantList.forEach((restaurant) => {
+        const isClose = calculateStatus(restaurant);
+        if (isClose === false) {
+          closedRestaurants.push(restaurant);
+        }
+      });
+      setRestaurantsWithItems(closedRestaurants);
+    }
+    if (open == true && close === true && checkedMenu.length >= 1) {
+      findRestaurants(checkedMenu);
+    }
+  }, [open, close, checkedMenu]);
+
+  const handleOpen = () => {
+    setOpen(!open);
+    console.log("open:", open);
+    console.log("close:", close);
+
+    const openRestaurants = [];
+    if (restaurantWithItems.length === 0 && open === false) {
+      restaurantList.forEach((restaurant) => {
+        const isOpen = calculateStatus(restaurant);
+        if (isOpen === true) {
+          openRestaurants.push(restaurant);
+        }
+      });
+      setRestaurantsWithItems(openRestaurants);
+    }
+    if (checkedMenu.length === 0 && open === true) {
+      setRestaurantsWithItems([]);
+    }
+    if (restaurantWithItems.length > 0 && open === false) {
+      restaurantWithItems.forEach((restaurant) => {
+        const isOpen = calculateStatus(restaurant);
+        if (isOpen === true) {
+          openRestaurants.push(restaurant);
+        }
+      });
+      setRestaurantsWithItems(openRestaurants);
+    }
+    if (checkedMenu.length >= 1 && open === true) {
+      findRestaurants(checkedMenu);
+    }
+  };
+  const handleClose = () => {
+    setClose(!close);
+    const closedRestaurants = [];
+    if (restaurantWithItems.length === 0 && close === false) {
+      restaurantList.forEach((restaurant) => {
+        const isClose = calculateStatus(restaurant);
+        if (isClose === false) {
+          closedRestaurants.push(restaurant);
+        }
+      });
+      setRestaurantsWithItems(closedRestaurants);
+    }
+    if (checkedMenu.length === 0 && close === true) {
+      setRestaurantsWithItems([]);
+    }
+    if (restaurantWithItems.length > 0 && close === false) {
+      restaurantWithItems.forEach((restaurant) => {
+        const isClose = calculateStatus(restaurant);
+        if (isClose === false) {
+          closedRestaurants.push(restaurant);
+        }
+      });
+      setRestaurantsWithItems(closedRestaurants);
+    }
+    if (checkedMenu.length >= 1 && close === true) {
+      findRestaurants(checkedMenu);
+    }
+  };
   const [cuisines, setCuisines] = useState([
     "Apple Juice",
     "BB.Q",
@@ -23,14 +115,53 @@ function Restaurants({ restaurants }) {
     "Cheese Burger",
     "Chicken Roast",
   ]);
+  useEffect(() => {
+    fetch("http://localhost:8080/restaurants")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("response not ok");
+        }
+        return response.json();
+      })
+      .then((list) => {
+        setRestaurantList(list.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
+  const calculateStatus = (restaurant) => {
+    if (restaurant && restaurant.openingHours) {
+      if (restaurant.openingHours === "full time") {
+        return true;
+      } else {
+        const [start, end] = restaurant.openingHours.split("-").map((time) => {
+          const [hour, minute] = time.split(":").map(Number);
+          return hour * 60 + minute;
+        });
+
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTime = currentHour * 60 + currentMinute;
+
+        if (start <= end) {
+          return currentTime >= start && currentTime <= end;
+        } else {
+          return currentTime >= start || currentTime <= end;
+        }
+      }
+    }
+
+    return false; // Default to false if no valid openingHours
+  };
+
   const findRestaurants = (updatedCheckedMenu) => {
-    const associatedRestaurants = [];
+    let associatedRestaurants = [];
 
     if (updatedCheckedMenu.length === 0) {
-      // If no checkboxes are selected, show all restaurants
-      restaurantList.forEach((restaurant) => {
-        associatedRestaurants.push({ ...restaurant }); // Push entire restaurant object
-      });
+      setRestaurantsWithItems([]);
     } else {
       restaurantList.forEach((restaurant) => {
         const menuItems = restaurant.cuisines;
@@ -39,18 +170,18 @@ function Restaurants({ restaurants }) {
           menuItems &&
           updatedCheckedMenu.every((item) => menuItems.includes(item))
         ) {
-          associatedRestaurants.push({ ...restaurant }); // Push entire restaurant object
+          associatedRestaurants.push({ ...restaurant });
         }
       });
     }
 
     setRestaurantsWithItems(associatedRestaurants);
   };
+
   const handleCheckboxChange = (event) => {
     const menuItem = event.target.value;
     const updatedMenu = [...checkedMenu];
-    // console.log(checkedMenu);
-    console.log(menuItem);
+
     if (event.target.checked) {
       updatedMenu.push(menuItem);
     } else {
@@ -104,56 +235,6 @@ function Restaurants({ restaurants }) {
     );
     setRestaurantsWithItems(sortedArray);
   };
-  ///Restaurant status
-  const calculateStatus = (restaurant) => {
-    if (restaurant && restaurant.openingHours) {
-      if (restaurant.openingHours === "full time") {
-        return true;
-      } else {
-        const [start, end] = restaurant.openingHours.split("-").map((time) => {
-          const [hour, minute] = time.split(":").map(Number);
-          return hour * 60 + minute;
-        });
-
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const currentTime = currentHour * 60 + currentMinute;
-
-        return currentTime >= start && currentTime <= end;
-      }
-    }
-
-    return false; // Default to false if no valid openingHours
-  };
-  //toggle like
-  // Assuming you have a state for the checkbox
-  const [showOpenOnly, setShowOpenOnly] = useState(false);
-
-  const handleOpenClose = () => {
-    setShowOpenOnly((prev) => !prev);
-  };
-
-  const sortedAndFilteredRestaurants = restaurantList
-    .filter((restaurant) => !showOpenOnly || calculateStatus(restaurant))
-    .sort((a, b) => b.ratings - a.ratings);
-
-  //Fetch the restaurant data when the component mounts
-  useEffect(() => {
-    fetch("http://localhost:8080/restaurants")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("response not ok");
-        }
-        return response.json();
-      })
-      .then((list) => {
-        setRestaurantList(list.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
 
   return (
     <>
@@ -317,104 +398,7 @@ function Restaurants({ restaurants }) {
                                   </label>
                                 </div>
                               ))}
-                              {/* {menuItems.map((menuItem) => (
-                                <div className="checkbox" key={menuItem}>
-                                  <input
-                                    type="checkbox"
-                                    id={`foodbakery_${menuItem}`}
-                                    className="foodbakery_restaurant_category"
-                                    value={menuItem}
-                                    // onChange={handleCheckboxChange}
-                                  />
-                                  <label htmlFor={`foodbakery_${menuItem}`}>
-                                    {menuItem}
-                                  </label>
-                                </div>
-                              ))} */}
-                              {/* <li>
-                                <div className="checkbox">
-                                  <input
-                                    type="checkbox"
-                                    id="foodbakery_restaurant_category_1"
-                                    className="foodbakery_restaurant_category"
-                                    value="apple-juice"
-                                  />
-                                  <label for="foodbakery_restaurant_category_1">
-                                    Apple Juice
-                                  </label>
-                                  <span>(5)</span>
-                                </div>
-                              </li>
-                              <li>
-                                <div className="checkbox">
-                                  <input
-                                    type="checkbox"
-                                    id="foodbakery_restaurant_category_2"
-                                    className="foodbakery_restaurant_category"
-                                    value="apple-juice"
-                                  />
-                                  <label for="foodbakery_restaurant_category_2">
-                                    BB.Q
-                                  </label>
-                                  <span>(2)</span>
-                                </div>
-                              </li>
-                              <li>
-                                <div className="checkbox">
-                                  <input
-                                    type="checkbox"
-                                    id="foodbakery_restaurant_category_3"
-                                    className="foodbakery_restaurant_category"
-                                    value="apple-juice"
-                                  />
-                                  <label for="foodbakery_restaurant_category_3">
-                                    Beef Roast
-                                  </label>
-                                  <span>(3)</span>
-                                </div>
-                              </li>
-                              <li>
-                                <div className="checkbox">
-                                  <input
-                                    type="checkbox"
-                                    id="foodbakery_restaurant_category_4"
-                                    className="foodbakery_restaurant_category"
-                                    value="apple-juice"
-                                  />
-                                  <label for="foodbakery_restaurant_category_4">
-                                    Carrot Juice
-                                  </label>
-                                  <span>(1)</span>
-                                </div>
-                              </li>
-                              <li>
-                                <div className="checkbox">
-                                  <input
-                                    type="checkbox"
-                                    id="foodbakery_restaurant_category_5"
-                                    className="foodbakery_restaurant_category"
-                                    value="apple-juice"
-                                  />
-                                  <label for="foodbakery_restaurant_category_5">
-                                    Cheese Burger
-                                  </label>
-                                  <span>(6)</span>
-                                </div>
-                              </li>
-                              <li>
-                                <div className="checkbox">
-                                  <input
-                                    type="checkbox"
-                                    id="foodbakery_restaurant_category_6"
-                                    className="foodbakery_restaurant_category"
-                                    value="apple-juice"
-                                  />
-                                  <label for="foodbakery_restaurant_category_6">
-                                    Cheicken Roast
-                                  </label>
-                                  <span>(2)</span>
-                                </div>
-                              </li> */}
+
                               <li className="expand">See more cuisines</li>
                             </ul>
                           </div>
@@ -435,6 +419,8 @@ function Restaurants({ restaurants }) {
                                     name="restaurant_timings_checkbox"
                                     className=""
                                     value="open"
+                                    checked={open}
+                                    onChange={handleOpen}
                                   />
                                   <label for="restaurant_timings_open">
                                     Open Now
@@ -450,6 +436,8 @@ function Restaurants({ restaurants }) {
                                     name="restaurant_timings_checkbox"
                                     className="restaurant_timings_close"
                                     value="close"
+                                    checked={close}
+                                    onChange={handleClose}
                                   />
                                   <label for="restaurant_timings_close">
                                     Closed Now
@@ -543,7 +531,9 @@ function Restaurants({ restaurants }) {
                     <div className="listing-sorting-holder">
                       <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                          <h4>{restaurants.length} Restaurant's found</h4>
+                          <h4>
+                            {restaurantWithItems.length} Restaurant's found
+                          </h4>
                         </div>
                       </div>
                     </div>
