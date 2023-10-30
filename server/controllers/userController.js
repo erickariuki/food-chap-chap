@@ -2,19 +2,40 @@ import User from "../model/User.model.js";
 import Post from "../model/postModel.js";
 
 
+// List all users
+export async function listUsers(req, res) {
+  try {
+    const users = await User.find({}, "username, email"); // You can select the fields you want to include
 
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+// Get user by ID
 export async function getUser(req, res) {
-      const { userId, username } = req.query;
-      try {
-        const user = userId
-          ? await User.findById(userId)
-          : await User.findOne({ username: username });
-        const { password, updatedAt, ...other } = user._doc;
-        res.status(200).json(other);
-      } catch (err) {
-        res.status(500).json(err);
-      }
-    };
+  try {
+    const userId = req.params.id;
+
+    // Validate if userId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
+    const user = await User.findById(userId, "username email");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
   
     export async function getFriends(req, res) {
       try {
@@ -33,148 +54,88 @@ export async function getUser(req, res) {
       }
     };
   
-    export async function followUser(req, res) {
-      const { id } = req.params;
-      const { userId } = req.body;
-      if (userId !== id) {
-        try {
-          const user = await User.findById(id);
-          const currentUser = await User.findById(userId);
-          if (!user.followers.includes(userId)) {
-            await user.updateOne({ $push: { followers: userId } });
-            await currentUser.updateOne({ $push: { followings: id } });
-            res.status(200).json("user has been followed");
-          } else {
-            res.status(403).json("you already follow this user");
-          }
-        } catch (err) {
-          res.status(500).json(err);
-        }
-      } else {
-        res.status(403).json("you can't follow yourself");
-      }
-    };
-  
-    export async function unfollowUser(req, res) {
-      const { id } = req.params;
-      const { userId } = req.body;
-      if (userId !== id) {
-        try {
-          const user = await User.findById(id);
-          const currentUser = await User.findById(userId);
-          if (user.followers.includes(userId)) {
-            await user.updateOne({ $pull: { followers: userId } });
-            await currentUser.updateOne({ $pull: { followings: id } });
-            res.status(200).json("user has been unfollowed");
-          } else {
-            res.status(403).json("you don't follow this user");
-          }
-        } catch (err) {
-          res.status(500).json(err);
-        }
-      } else {
-        res.status(403).json("you can't unfollow yourself");
-      }
-    };
-  
-export async function updateUserById (req, res) {
-    try {
-      const updatedUser = await User.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-      );
-      if (!updatedUser) {
-        return res.status(404).json({ error: "User not found" });
-      }
-      res.status(200).json(updatedUser);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal Server Error" });
+//Update profile pic
+export async function updateProfilePic(req, res){
+  try {
+    const { profilePic } = req.body;
+    const userId = req.user.userId;
+
+
+    const user = await User.findByIdAndUpdate(userId, {profilePic}, { new: true});
+    if(!user){
+      return res.status(404).json({error: "User not found"});
     }
-  };
 
-// export async function followUser (req, res) {
-//     try {
-//         const followId = req.body.followId;
-//         const user = await User.findByIdAndUpdate(
-//             req.user._id,
-//             { $push: { following: followId } },
-//             { new: true }
-//         );
+    res.status(200).json({message: "Profile picture updated successfully", data: user});
+  } catch (error){
+    console.error(error);
+    res.status(500).json({error: "Internal Server Error"});
+  }
+}
 
-//         if (!user) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
+//Follow another user
+export async function followUser(req, res){
+  try {
+    const followId = req.body.followId;
+    const userId = req.user.userId; //when userId is not stored in the token
 
-//         // Update the follower's followers list
-//         await User.findByIdAndUpdate(
-//             followId,
-//             { $push: { followers: req.user._id } },
-//             { new: true }
-//         );
+    //update user's following list
+    const user = await User.findByIdAndUpdate(userId, {$push: {following: followId}}, {new: true});
 
-//         res.json(user);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// };
+    if(!user){
+      return res.status(404).json({error: "User not found"});
+    }
 
-// export async function unfollowUser (req, res) {
-//     User.findByIdAndUpdate(
-//         req.body.unfollowId,
-//         {
-//             $pull: { followers: req.user._id }
-//         },
-//         {
-//             new: true
-//         },
-//         (err, result) => {
-//             if (err) {
-//                 return res.status(422).json({ error: err });
-//             }
-//             User.findByIdAndUpdate(
-//                 req.user._id,
-//                 {
-//                     $pull: { following: req.body.unfollowId }
-//                 },
-//                 { new: true }
-//             )
-//                 .select("-password")
-//                 .then(result => {
-//                     res.json(result);
-//                 })
-//                 .catch(err => {
-//                     return res.status(422).json({ error: err });
-//                 });
-//         }
-//     );
-// };
+    //update the follower's list
+    await User.findByIdAndUpdate(followId, {$push: {following: userId}}, {new: true});
 
-export async function updateProfilePic (req, res) {
-    User.findByIdAndUpdate(
-        req.user._id,
-        { $set: { profilePic: req.body.pic } },
-        { new: true },
-        (err, result) => {
-            if (err) {
-                return res.status(422).json({ error: "pic cannot be updated" });
-            }
-            res.json(result);
-        }
-    );
-};
+    res.status(200).json({ message: "User followed", data: user})
+  } catch(error){
+    console.error(error);
+    res.status(500).json({error: "Internal Server Error"});
+  }
+}
 
-export async function searchUsers (req, res) {
-    let userPattern = new RegExp("^" + req.body.query);
-    User.find({ username: { $regex: userPattern } })
-        .select("_id username")
-        .then(users => {
-            res.json({ users });
-        })
-        .catch(err => {
-            console.log(err);
-        });
-};
+//unfollow another user
+export async function unfollowUser(req, res){
+  try {
+    const unfollowId = req.body.unfollowId;
+    const userId = req.user.userId; //when userId is not stored in the token
+    
+    //Remove the user from the followers list
+    await User.findByIdAndUpdate(unfollowId, { $pull: { followers: userId} }, {new: true});
+
+    //remove unfollowed user from users following list
+    const user = await User.findByIdAndUpdate(userId, {$pull: {following: unfollowId}}, {new: true});
+
+    if(!user){
+      return res.status(404).json({error: "User not found"});
+    }
+
+    res.status(200).json({ message: "User unfollowed", data: user})
+
+  } catch(error){
+    console.error(error);
+    res.status(500).json({error: "Internal Server Error"});
+  }
+}
+
+//search user
+export async function searchUsers(req, res) {
+  try {
+    const { query } = req.body;
+
+    // Create a regular expression pattern to search for usernames
+    const userPattern = new RegExp("^" + query);
+
+    // Find users whose usernames match the pattern
+    const users = await User.find({ username: { $regex: userPattern } })
+      .select("_id username");
+
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
 
