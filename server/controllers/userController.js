@@ -1,5 +1,6 @@
 import User from "../model/User.model.js";
-import Post from "../model/postModel.js";
+// import Post from "../model/postModel.js";
+import mongoose from "mongoose";
 
 
 // List all users
