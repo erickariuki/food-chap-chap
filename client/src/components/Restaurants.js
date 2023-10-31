@@ -547,11 +547,18 @@ function Restaurants({ restaurants }) {
                             <AiOutlineHeart onClick={() => setLiked(!liked)} />
                           )}
                           <ul>{currentStatus}</ul>
-                          <AiFillStar />
-                          <AiFillStar />
-                          <AiFillStar />
-                          <AiFillStar />
-                          <AiFillStar />
+                          {[
+                            ...Array(Math.floor(calculateAverage(val.ratings))),
+                          ].map((_, index) => (
+                            <AiFillStar key={index} />
+                          ))}
+                          {[
+                            ...Array(
+                              5 - Math.floor(calculateAverage(val.ratings))
+                            ),
+                          ].map((_, index) => (
+                            <AiOutlineStar key={index} />
+                          ))}
                           <ul>{calculateStatus(val) ? "Open" : "Closed"}</ul>
                           <ul>{val.openingHours}</ul>
                           <ul>{val.name}</ul>
