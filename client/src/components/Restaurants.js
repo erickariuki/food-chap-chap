@@ -236,6 +236,35 @@ function Restaurants({ restaurants }) {
     setRestaurantsWithItems(sortedArray);
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [highlightedPage, setHighlightedPage] = useState(currentPage);
+  const itemsPerPage = 10;
+  const totalItems = restaurantWithItems.length;
+
+  function getCurrentPageItems() {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+    return restaurantWithItems.slice(startIndex, endIndex);
+  }
+
+  function handleNextPage() {
+    setCurrentPage(currentPage + 1);
+    setHighlightedPage(currentPage + 1);
+  }
+
+  function handlePrevPage() {
+    setCurrentPage(currentPage - 1);
+    setHighlightedPage(currentPage - 1);
+  }
+
+  function handleGoToPage(pageNumber) {
+    setCurrentPage(pageNumber);
+    setHighlightedPage(pageNumber);
+  }
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const currentPageItems = getCurrentPageItems();
+
   return (
     <>
       <div className="main-section">
@@ -538,7 +567,7 @@ function Restaurants({ restaurants }) {
                       </div>
                     </div>
                     <div className="listing simple">
-                      {restaurantWithItems.map((val) => (
+                      {currentPageItems.map((val) => (
                         <div key={val.id}>
                           {/* <img src={val.image} alt={(val.name, "logo")} /> */}
                           {liked ? (
@@ -660,18 +689,44 @@ function Restaurants({ restaurants }) {
                         <div className="page-nation">
                           <ul className="pagination pagination-large">
                             <li className="disabled">
-                              <span>Prev</span>
+                              {currentPage > 1 && (
+                                <button onClick={handlePrevPage}>
+                                  Previous
+                                </button>
+                              )}
+                              {/* <span onClick={handlePrevPage}>Prev</span> */}
                             </li>
                             <li className="active">
                               <span>
-                                <a className="page-numbers active">1</a>
+                                {/* <a className="page-numbers active">1</a> */}
                               </span>
                             </li>
                             <li>
-                              <a href="#">2</a>
+                              <span>
+                                {[...Array(totalPages)].map((_, index) => (
+                                  <button
+                                    key={index + 1}
+                                    onClick={() => handleGoToPage(index + 1)}
+                                    style={{
+                                      fontWeight:
+                                        highlightedPage === index + 1
+                                          ? "bold"
+                                          : "normal",
+                                    }}
+                                  >
+                                    {index + 1}
+                                  </button>
+                                ))}
+                              </span>
+                              {/* <a href="#">2</a> */}
                             </li>
                             <li>
-                              <a href="#">Next</a>
+                              {currentPage < totalPages && (
+                                <button onClick={handleNextPage}>Next</button>
+                              )}
+                              {/* <a href="#" onClick={handleNextPage}>
+                                Next
+                              </a> */}
                             </li>
                           </ul>
                         </div>
