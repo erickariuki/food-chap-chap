@@ -1,0 +1,51 @@
+.page-sidebar {
+  width: 20%;
+  height: 100vh;
+  margin-top: 65px;
+  background-color: red;
+  transition: width 0.3s ease; /* add more properties for smoother transition */
+  position: fixed;
+  color: none;
+  right: 0;
+  margin-right: 0;
+  margin-left: 10px;
+  
+  
+}
+
+.widget-holder {
+  margin-bottom: 20px;
+  margin-left: 0;
+  background-color: red;
+}
+
+.widget-title {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.widget-title h5 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.img-holder figure a img {
+  width: 100%;
+  height: auto;
+}
+
+.text-holder {
+  margin-top: 10px;
+}
+
+.post-title a {
+  color: #333;
+  text-decoration: none;
+}
+
+.post-title a:hover {
+  color: #007bff;
+}
+

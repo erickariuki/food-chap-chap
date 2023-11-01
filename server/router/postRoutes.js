@@ -1,15 +1,20 @@
-import express from 'express';
-import { createPost, getPost, deletePost, likeUnlikePost, getFeedPosts } from '../controllers/postControllers.js';
-import Auth from '../middleware/auth.js'
+import express from "express";
+const router = express.Router();
+import Auth from "../middleware/auth.js";
+import { getAllPosts, Timeline, getSubscribedPosts, createPost, getUserProfile,getMyPosts, likePost, unlikePost, commentOnPost, deletePost } from "../controllers/postControllers.js";
+// import { upload } from '../middleware/upload.js';
 
-const postRouter = express.Router();
 
-postRouter.get('/feed', Auth, getFeedPosts);
-postRouter.get('/:id', getPost);
-// postRouter.get("/user/:username", getUserPosts);
-postRouter.post('/create', Auth, createPost);
-postRouter.delete('/:id', Auth, deletePost);
-postRouter.post('/like/:id', Auth, likeUnlikePost);
-// postRouter.post('/reply/:id', Auth, replyToPost);
+router.get("/",  getAllPosts);
+router.get("/getsubpost", Auth, getSubscribedPosts);
+router.post('/createpost', Auth,  createPost);
+router.get("/mypost", Auth, getMyPosts);
+router.put("/like", Auth, likePost);
+router.put("/unlike", Auth, unlikePost);
+router.put("/comment", Auth, commentOnPost);
+router.delete("/deletepost/:id", Auth, deletePost);
+router.get("/timeline/:userId", Timeline)
+router.get("/UserProfile/:username", getUserProfile)
 
-export default postRouter;
+
+export default router;

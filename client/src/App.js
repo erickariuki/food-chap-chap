@@ -51,6 +51,7 @@ import UserProfile from './components/UserProfile';
 import BlogDetail from './components/blog/BlogDetail';
 import axios from 'axios';
 import NotAdmin from './components/NotAdmin';
+import Blog from './pages/blog/Blog';
 
 function App() {
   const [foods, setFoods] = useState([]);
@@ -152,6 +153,7 @@ function App() {
 <Route path="/admindash/bookings" element={<AdminBookings />} />
 <Route path="/admindash/password/termsandconditions" element={<AdminPassword />} />
 <Route path="/admindash/restaurants" element={<AdminRestaurants/>} />
+<Route path="/blogs" element={<Blog />} />
 <Route path="/blogs/createblog" element={<CreateBlog/>} />
 <Route path="/blogs" element={<BlogPage blogs={blogs}  />} />
 
