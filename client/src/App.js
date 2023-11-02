@@ -80,7 +80,7 @@ function App() {
             // Handle error or redirect to login
         });
 }, []);
-// console.log(user);
+console.log(user, "Not Working");
 
   useEffect(() => {
     fetch("/blogs")

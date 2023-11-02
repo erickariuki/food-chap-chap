@@ -57,7 +57,7 @@ app.use('/orders', orderRoutes);
 // API Routes
 app.use('/api', router);
 app.use('/api/foods', foodRouter);
-app.use('/api/users', userRouter);
+app.use('/api/user', userRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/blogs', blogRouter);
 app.use('/api/cuisines', cuisineRouter);

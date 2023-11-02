@@ -7,62 +7,110 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import ShareIcon from '@mui/icons-material/Share';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
+
 const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [followStates, setFollowStates] = useState({}); // State to store follow status of each user
   const [user, setUser] = useState({});
+  
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get("http://localhost:8080/api/posts");
-        if (Array.isArray(response.data.posts)) { // Ensure the data is an array
+        if (Array.isArray(response.data.posts)) {
           setPosts(response.data.posts);
-          // Initialize followStates with false for each user
           const newFollowStates = {};
           response.data.posts.forEach(post => {
             newFollowStates[post.author] = false;
           });
           setFollowStates(newFollowStates);
+          // Set the user state with the user's ID
+          setUser(prevUser => ({ ...prevUser, _Id: response.data.posts[0].author }));
         } else {
           console.error("Error: fetched data is not an array");
         }
-        setLoading(false); // Set loading to false after data is fetched
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
-        setLoading(false); // Set loading to false in case of error
+        setLoading(false);
       }
     };
 
     fetchPosts();
   }, []);
-  
+
+
   useEffect(() => {
-    fetch(`http://localhost:8080/api/users/${user._Id}`)
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    };
+    fetch(`http://localhost:8080/api/user`, config)
       .then(response => response.json())
       .then(data => setUser(data));
-  }, []);// Empty dependency array ensures useEffect runs once after initial render
-
+  }, []);
+   // Empty dependency array ensures useEffect runs once after initial render
+    // Empty dependency array ensures useEffect runs once after initial render
+    // const userId = ${user._Id}
+   console.log(user , "This is user")
+   
   // Function to follow a user
   const followUser = async (userId) => {
+    const token = localStorage.getItem('token'); // replace 'token' with the key you used to store the token
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+      
+    };
     try {
-      await axios.put(`http://localhost:8080/api/users/follow/${userId}`);
-      setFollowStates(prevState => ({ ...prevState, [userId]: true }));
+      const response = await axios.put(`http://localhost:8080/api/user/follow`, null, config);
+      // handle success
     } catch (error) {
-      console.error("Error following user:", error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
+    }
+   };
+   
+  
+  
+
+
+
+  // Function to unfollow a user
+  const unfollowUser = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+      await axios.put(`http://localhost:8080/api/user/unfollow`, {}, config);
+      setFollowStates(prevState => ({ ...prevState, [`${user._id}`]: false }));
+    } catch (error) {
+      console.error("Error unfollowing user:", error.message);
     }
   };
 
-  // Function to unfollow a user
-  const unfollowUser = async (userId) => {
-    try {
-      await axios.put(`http://localhost:8080/api/users/unfollow/${userId}`);
-      setFollowStates(prevState => ({ ...prevState, [userId]: false }));
-    } catch (error) {
-      console.error("Error unfollowing user:", error);
-    }
-  };
 
   if (loading) {
     return <div>Loading...</div>; // Show loading message while data is being fetched
@@ -89,45 +137,47 @@ const Feed = () => {
         </div>
         <CreatePost />
       </div>
-      {posts.map((post) => (
-        <div className="card" key={post._id}>
-          <div className="card-header">
-          <AccountCircleIcon/>
-          <span className="user">
-            <small>Posted by: <a href={`/profile/${post.author}`}>{post.author}</a></small>
-            {followStates[post.author] ? (
-              <button className="btn-fol" onClick={() => unfollowUser(post.author)}>Unfollow</button>
-            ) : (
-              <button className="btn-fol" onClick={() => followUser(post.author)}>Follow</button>
-            )}
-            </span>
-          </div>
-          <div style={{display:'flex', alignItems:'center'}}>
-            
-          {/* <img src={user?.profilePic} className="profileimage" alt="" /> */}
-          <h3 style={{marginLeft:'10px'}}>{user?.username}</h3>
-        </div>
-          <img className="card-img" src={post.image} alt="Post" />
-          <div className="card-body">
-            <h5 className="card-title">{post.title}</h5>
-            <p className="card-text">{post.content}</p>
-          </div>
-          <div className="MoreIcons">
-            <button className="btn">
-              <FavoriteBorderIcon />
-            </button>
-            <button className="btn">
-              <BookmarkIcon />
-            </button>
-            <button className="btn">
-              <ShareIcon />
-            </button>
-          </div>
+      <div className="grid-container">
+        {posts.map((post) => (
+          <div className="card" key={post._id}>
+            <div className="card-header">
+              <AccountCircleIcon />
+              <span className="user">
+                <small>Posted by: <a href={`/profile/${post.postedBy}`}>{post.postedBy}</a></small>
+                {followStates[post.author] ? (
+                  <button className="btn-fol" onClick={() => unfollowUser(post.postedBy)}>Following</button>
+                ) : (
+                  <button className="btn-fol" onClick={() => followUser(post.postedBy)}>Follow</button>
+                )}
+              </span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
 
-          <a href="blog-detail.html" className="read-more text-color">Learn more <i className="icon-arrow-right22"></i></a>
-          
-        </div>
-      ))}
+              {/* <img src={user?.profilePic} className="profileimage" alt="" /> */}
+              <h3 style={{ marginLeft: '10px' }}>{user?.username}</h3>
+            </div>
+            <img className="card-img" src={post.image} alt="Post" />
+            <div className="card-body">
+              <h5 className="card-title">{post.title}</h5>
+              <p className="card-text">{post.content}</p>
+            </div>
+            <div className="MoreIcons">
+              <button className="btn">
+                <FavoriteBorderIcon />
+              </button>
+              <button className="btn">
+                <BookmarkIcon />
+              </button>
+              <button className="btn">
+                <ShareIcon />
+              </button>
+            </div>
+
+            <a href="blog-detail.html" className="read-more text-color">Learn more <i className="icon-arrow-right22"></i></a>
+
+          </div>
+        ))}
+      </div>
 
 
     </div>

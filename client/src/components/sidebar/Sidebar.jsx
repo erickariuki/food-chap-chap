@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './sidebar.css';
 import {
@@ -15,12 +15,19 @@ import Feed from '../feed/Feed'
 import Profile from '../profile/Profile'
 
 export default function Sidebar() {
+  const [sidebar, setSidebar] = useState(true);
+
+  const hideSidebar = () => setSidebar(false);
+ 
+  if (!sidebar) {
+    return null;
+  }
   return (
     <div className="sidebar">
       <div className="sidebarWrapper">
         <ul className="sidebarList">
           <li className="sidebarListItem">
-            <Link to="/Feed">
+            <Link to="/Feed" onClick={hideSidebar}>
               <RssFeed className="sidebarIcon" />
               <span className="sidebarListItemText">Feed </span>
             </Link>

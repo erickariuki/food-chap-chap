@@ -5,7 +5,7 @@ import { getUser, followUser, unfollowUser, updateProfilePic, searchUsers, listU
 
 router.get("/", Auth, listUsers);
 router.get("/:id", Auth, getUser);
-router.put("/follow/:id", Auth, followUser);
+router.put("/follow", Auth, followUser);
 router.put("/unfollow", Auth, unfollowUser);
 router.put("/updatepic", Auth, updateProfilePic);
 router.post("/searchUsers", Auth, searchUsers);
