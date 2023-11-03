@@ -13,7 +13,7 @@ const Feed = () => {
   const [loading, setLoading] = useState(true);
   const [followStates, setFollowStates] = useState({}); // State to store follow status of each user
   const [user, setUser] = useState({});
-  
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -26,8 +26,18 @@ const Feed = () => {
             newFollowStates[post.author] = false;
           });
           setFollowStates(newFollowStates);
-          // Set the user state with the user's ID
-          setUser(prevUser => ({ ...prevUser, _Id: response.data.posts[0].author }));
+          // Check if the posts array is not empty
+          if (response.data.posts.length > 0) {
+            // Check if the author field is not undefined
+            if (response.data.posts[0].author) {
+              // Set the user state with the user's ID
+              setUser(prevUser => ({ ...prevUser, _id: response.data.posts[0].author }));
+            } else {
+              console.error("Error: author field is undefined");
+            }
+          } else {
+            console.error("Error: posts array is empty");
+          }
         } else {
           console.error("Error: fetched data is not an array");
         }
@@ -37,9 +47,10 @@ const Feed = () => {
         setLoading(false);
       }
     };
-
+  
     fetchPosts();
   }, []);
+  
 
 
   useEffect(() => {
@@ -49,54 +60,30 @@ const Feed = () => {
         'Authorization': `Bearer ${token}`
       }
     };
+  
+    // Add interceptor for 401 errors
+    axios.interceptors.response.use(
+      response => response, // simply return the response if it was successful
+      error => {
+        if (error.response && error.response.status === 401) {
+          console.log('Unauthorized');
+          // You can add your logic here to refresh the token or redirect the user to the login page
+        }
+        return Promise.reject(error);
+      }
+    );
+  
     fetch(`http://localhost:8080/api/user`, config)
       .then(response => response.json())
       .then(data => setUser(data));
   }, []);
-   // Empty dependency array ensures useEffect runs once after initial render
-    // Empty dependency array ensures useEffect runs once after initial render
-    // const userId = ${user._Id}
-   console.log(user , "This is user")
-   
+  // Empty dependency array ensures useEffect runs once after initial render
+  // Empty dependency array ensures useEffect runs once after initial render
+  // const userId = ${user._Id}
+  console.log(user, "This is user")
+
   // Function to follow a user
   const followUser = async (userId) => {
-    const token = localStorage.getItem('token'); // replace 'token' with the key you used to store the token
-    const config = {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-      
-    };
-    try {
-      const response = await axios.put(`http://localhost:8080/api/user/follow`, null, config);
-      // handle success
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log('Error', error.message);
-      }
-      console.log(error.config);
-    }
-   };
-   
-  
-  
-
-
-
-  // Function to unfollow a user
-  const unfollowUser = async () => {
     try {
       const token = localStorage.getItem('token');
       const config = {
@@ -104,12 +91,29 @@ const Feed = () => {
           'Authorization': `Bearer ${token}`
         }
       };
-      await axios.put(`http://localhost:8080/api/user/unfollow`, {}, config);
-      setFollowStates(prevState => ({ ...prevState, [`${user._id}`]: false }));
+      await axios.put(`http://localhost:8080/api/user/follow`, { followId: userId }, config);
+      setFollowStates(prevState => ({ ...prevState, [userId]: true }));
+    } catch (error) {
+      console.error("Error following user:", error.message);
+    }
+  };
+
+  // Function to unfollow a user
+  const unfollowUser = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+      await axios.put(`http://localhost:8080/api/user/unfollow`, { unfollowId: userId }, config);
+      setFollowStates(prevState => ({ ...prevState, [userId]: false }));
     } catch (error) {
       console.error("Error unfollowing user:", error.message);
     }
   };
+
 
 
   if (loading) {
@@ -144,7 +148,7 @@ const Feed = () => {
               <AccountCircleIcon />
               <span className="user">
                 <small>Posted by: <a href={`/profile/${post.postedBy}`}>{post.postedBy}</a></small>
-                {followStates[post.author] ? (
+                {followStates[post.postedBy] ? (
                   <button className="btn-fol" onClick={() => unfollowUser(post.postedBy)}>Following</button>
                 ) : (
                   <button className="btn-fol" onClick={() => followUser(post.postedBy)}>Follow</button>
