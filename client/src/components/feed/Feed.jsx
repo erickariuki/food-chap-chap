@@ -65,18 +65,21 @@ const Feed = () => {
     axios.interceptors.response.use(
       response => response, // simply return the response if it was successful
       error => {
-        if (error.response && error.response.status === 401) {
-          console.log('Unauthorized');
-          // You can add your logic here to refresh the token or redirect the user to the login page
+        if (error.response) {
+          if (error.response.status === 403) {
+            console.log('Forbidden');
+            // You can add your logic here to handle the 403 error
+          }
         }
         return Promise.reject(error);
       }
     );
-  
+    
     fetch(`http://localhost:8080/api/user`, config)
       .then(response => response.json())
       .then(data => setUser(data));
   }, []);
+  
   // Empty dependency array ensures useEffect runs once after initial render
   // Empty dependency array ensures useEffect runs once after initial render
   // const userId = ${user._Id}
