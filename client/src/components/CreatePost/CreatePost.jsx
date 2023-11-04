@@ -1,75 +1,94 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './createpost.css';
-import ImageIcon from '@mui/icons-material/Image';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button } from '@material-ui/core';
+import FileBase from 'react-file-base64';
+import './createpost.css'
 
-export default function CreatePost() {
-  const [file, setFile] = useState(null);
-  const [imagePre, setImagePre] = useState(null);
-  const [title, setTitle] = useState('');
+const Form = ({ posts }) => {
+ const [postData, setPostData] = useState({ title: '', body: '', pic: '' });
+ const [userData, setUserData] = useState({ username: '', profilePic: '' });
+ const [preview, setPreview] = useState('');
 
-  const handlePost = async (e) => {
-    e.preventDefault();
+ useEffect(() => {
+   fetch('http://localhost:8080/api/user')
+     .then(response => response.json())
+     .then(data => setUserData(data))
+     .catch(error => console.error('Error:', error));
 
-    if (file !== null && title.trim() !== '') {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('title', title);
-      // Add other fields like 'postedBy', etc., to the formData if needed.
+   if (posts && posts._id) {
+     fetch(`http://localhost:8080/api/posts/${posts._id}`)
+       .then(response => response.json())
+       .then(data => setPostData(data))
+       .catch(error => console.error('Error:', error));
+   }
+ }, [posts]);
 
-      try {
-        const response = await axios.post('http://localhost:8080/api/posts/createpost', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+ const clear = () => {
+   setPostData({ title: '', body: '', pic: '' });
+ };
 
-        console.log(response.data);
-        // Handle success, e.g., show a success message to the user.
-      } catch (error) {
-        console.error('Error creating post:', error);
-        // Handle errors, e.g., show an error message to the user.
-      }
-    } else {
-      // Handle validation errors, e.g., show a validation error message to the user.
-      console.error('Please select an image and provide a title for the post.');
-    }
-  };
+ const handleSubmit = async (e) => {
+   e.preventDefault();
 
-  const handleDragOver = (e) => {
-    e.preventDefault(); // Prevent default behavior to allow drop
-  };
+   if (posts && !posts._id) {
+     fetch('http://localhost:8080/api/posts/createpost', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify(postData),
+     })
+       .then(response => response.json())
+       .then(data => {
+         console.log('Success:', data);
+         clear();
+       })
+       .catch((error) => {
+         console.error('Error:', error);
+       });
+   } else if (posts && posts._id) {
+     fetch(`http://localhost:8080/api/posts/updatepost/${posts._id}`, {
+       method: 'PUT',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify(postData),
+     })
+       .then(response => response.json())
+       .then(data => {
+         console.log('Success:', data);
+         clear();
+       })
+       .catch((error) => {
+         console.error('Error:', error);
+       });
+   }
+ };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      setFile(file);
-      setImagePre(URL.createObjectURL(file));
-    }
-  };
+ const handleProfileClick = () => {
+   window.location.href = `/user/${userData._id}`;
+ };
 
-  return (
-    <div className='ContentUploadContainer' onDragOver={handleDragOver} onDrop={handleDrop}>
-      <div style={{ display: "flex", alignItems: "center", padding: 10 }}>
-        <AccountCircleIcon className="profileimage" alt="" />
-        <input type="text" className='contentWritingpart' placeholder='Write your real thought.....' onChange={(e) => setTitle(e.target.value)} />
-      </div>
-      <div style={{ marginLeft: '10px' }}>
-        {imagePre !== null ? <img src={imagePre} style={{ width: "410px", height: '250px', objectFit: "cover", borderRadius: '10px' }} alt="" /> : ''}
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div>
-            <label htmlFor='file'>
-              <ImageIcon className="icons" alt="" />
-              <input type="file" name="file" id="file" style={{ display: "none" }} onChange={(e) => [setFile(e.target.files[0]), setImagePre(URL.createObjectURL(e.target.files[0]))]} />
-            </label>
-          </div>
-          <button className='button' onClick={handlePost}>Post</button>
-        </div>
-      </div>
-    </div>
-  );
-}
+ return (
+   <form className="form" onSubmit={handleSubmit}>
+     <div className="user-info" onClick={handleProfileClick}>
+       <img src={userData.profilePicture} alt="Profile" />
+       <h2>@{userData.name}</h2>
+     </div>
+     <h1>{posts && posts._id ? `Editing "${postData.title}"` : 'Create Your Own Post'}</h1>
+     <TextField label="Title" value={postData.title} onChange={(e) => setPostData({ ...postData, title: e.target.value })} />
+     <TextField label="Message" multiline rows={4} value={postData.body} onChange={(e) => setPostData({ ...postData, body: e.target.value })} />
+     <div>
+       <FileBase type="file" multiple={false} onDone={({ base64 }) => {
+         setPostData({ ...postData, pic: base64 });
+         setPreview(base64);
+       }} />
+     </div>
+     {preview && <img src={preview} alt="Preview" />}
+     <div className="button-container">
+       <Button className='sub' type="submit">Submit</Button>
+     </div>
+   </form>
+ );
+};
+
+export default Form;

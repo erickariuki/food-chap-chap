@@ -12,7 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Feed from '../feed/Feed'
-import Profile from '../profile/Profile'
+import UserProfile from '../userProfile/userProfile'
 
 export default function Sidebar() {
   const [sidebar, setSidebar] = useState(true);
@@ -27,7 +27,7 @@ export default function Sidebar() {
       <div className="sidebarWrapper">
         <ul className="sidebarList">
           <li className="sidebarListItem">
-            <Link to="/Feed" onClick={hideSidebar}>
+            <Link to="/" onClick={hideSidebar}>
               <RssFeed className="sidebarIcon" />
               <span className="sidebarListItemText">Feed </span>
             </Link>

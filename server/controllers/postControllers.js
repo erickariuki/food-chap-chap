@@ -69,6 +69,36 @@ export async function createPost(req, res) {
   }
 }
 
+export async function updatePost(req, res) {
+  const { title, body } = req.body;
+
+  // Check if an image file is uploaded
+  // if (!req.file) {
+  //   return res.status(422).json({ error: "Please upload an image" });
+  // }
+
+  // Set the postedBy field based on the authenticated user
+  req.body.postedBy = req.user._id;
+
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        text: body,
+        // image: req.file ? req.file.path : post.image,  // Update the file path in the database if a new file is uploaded
+        postedBy: req.body.postedBy
+      },
+      { new: true }
+    );
+    res.json({ post });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
 export async function getMyPosts(req, res) {
   try {
     const mypost = await Post.find({ postedBy: req.user._id })

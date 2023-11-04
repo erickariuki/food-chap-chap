@@ -1,13 +1,14 @@
 import express from "express";
 const router = express.Router();
 import Auth from "../middleware/auth.js";
-import { getAllPosts, Timeline, getSubscribedPosts, createPost, getUserProfile,getMyPosts, likePost, unlikePost, commentOnPost, deletePost } from "../controllers/postControllers.js";
+import { getAllPosts, Timeline, getSubscribedPosts, createPost, updatePost, getUserProfile,getMyPosts, likePost, unlikePost, commentOnPost, deletePost } from "../controllers/postControllers.js";
 // import { upload } from '../middleware/upload.js';
 
 
 router.get("/",  getAllPosts);
 router.get("/getsubpost", Auth, getSubscribedPosts);
 router.post('/createpost', Auth,  createPost);
+router.post('/updatepost', Auth,  updatePost);
 router.get("/mypost", Auth, getMyPosts);
 router.put("/like", Auth, likePost);
 router.put("/unlike", Auth, unlikePost);

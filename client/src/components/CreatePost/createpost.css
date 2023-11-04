@@ -1,61 +1,76 @@
-.ContentUploadContainer{
-  width: 100%;
-  background-color: white;
-  margin-left: 20px;
-  margin-top: 20px;
-  border-radius: 10px;
+.form {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  width: 100%;
+  padding: 20px;
+  margin: 0 auto;
+  background-color: #f8f8f8;
+  border-radius: 50px;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+  position: relative;  /* Add this line */
 }
 
-.contentWritingpart{
-  width: 29pc;
-  margin-left: 10px;
-  margin-top: 5px;
-  height: 4vh;
+.form .user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+
+.form h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.2em;  /* Make the title smaller */
+}
+
+.form .MuiTextField-root {
+  width: 100%;  /* Make the textarea take the full width of the form */
+  margin-bottom: 20px;
+  margin: 10px 0;
   border: none;
-  border-radius: 10px;
 }
 
-.profileimage{
-  width:40px;
-  height: 40px;
+.form .MuiTextField-root textarea {
+  height: auto;  /* Make the body textarea auto-resize */
+  min-height: 100px;  /* Set a minimum height */
+  max-height: 1000px;  /* Set a maximum height */
+  resize: vertical;  /* Allow the user to resize the textarea vertically */
+}
+
+.form .button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  
+}
+
+.form .MuiButton-root {
+  flex-grow: 1;
+  margin-top: 20px;
+}
+
+
+
+.form .user-info img {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  margin-left: 10px;
-  
+  margin-right: 10px;
+  cursor: pointer;
 }
 
-.icons{
-  width: 24px;
-  height: 24px;
-  margin-left: 20px;
-  margin-top: 49px;
-}
-.PostIcons{
-  width: 24px;
-  height: 24px;
-}
-.title{
-  width: 20px;
-  
-}
-.icons{
-  width: 10px;
-
+.form .user-info h2 {
+  margin: 0;
 }
 
-.button {
-  height: 30px;
-  margin-right: 12px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  border: none;
-  color: rgb(255, 255, 255);
-  background-color: rgb(0, 0, 0);
-  width: 100px;
+.sub {
+  background-color: black;
 }
 
-.button:hover{
-  background-color: rgb(187, 187, 187);
+.clear{
+  background-color: black;
 }
