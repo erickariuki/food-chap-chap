@@ -54,6 +54,7 @@
   transition: width 0.3s ease; /* add more properties for smoother transition */
   position: fixed;
   color: none;
+  transition: width 0.3s ease;
 }
 
 .sidebarWrapper {
@@ -83,3 +84,24 @@
 .sidebar.collapsed .sidebarListItemText {
   display: none;
 }
+
+
+
+.collapse-button {
+  font-size: 10px;
+  cursor: pointer;
+  padding: 10px;
+  text-align: center;
+  color: #fff;
+  display: none;
+}
+
+.sidebar.open {
+  width: 60px;
+}
+
+.sidebar.open .collapse-button {
+  display: block;
+}
+
+/* Rest of your styles for the sidebar content */
