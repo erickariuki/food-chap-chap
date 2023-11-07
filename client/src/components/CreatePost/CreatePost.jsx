@@ -70,10 +70,7 @@ const Form = ({ posts }) => {
 
  return (
    <form className="form" onSubmit={handleSubmit}>
-     <div className="user-info" onClick={handleProfileClick}>
-       <img src={userData.profilePicture} alt="Profile" />
-       <h2>@{userData.name}</h2>
-     </div>
+     
      <h1>{posts && posts._id ? `Editing "${postData.title}"` : 'Create Your Own Post'}</h1>
      <TextField label="Title" value={postData.title} onChange={(e) => setPostData({ ...postData, title: e.target.value })} />
      <TextField label="Message" multiline rows={4} value={postData.body} onChange={(e) => setPostData({ ...postData, body: e.target.value })} />
@@ -83,7 +80,6 @@ const Form = ({ posts }) => {
          setPreview(base64);
        }} />
      </div>
-     {preview && <img src={preview} alt="Preview" />}
      <div className="button-container">
        <Button className='sub' type="submit">Submit</Button>
      </div>

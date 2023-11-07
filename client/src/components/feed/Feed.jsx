@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import './feed.css'
-import CreatePost from '../CreatePost/CreatePost'
+
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import ShareIcon from '@mui/icons-material/Share';
@@ -13,6 +13,7 @@ const Feed = () => {
   const [loading, setLoading] = useState(true);
   const [followStates, setFollowStates] = useState({}); // State to store follow status of each user
   const [user, setUser] = useState({});
+  
 
 
   useEffect(() => {
@@ -142,7 +143,6 @@ const Feed = () => {
             </div>
           </div>
         </div>
-        <CreatePost />
       </div>
       <div className="grid-container">
         {posts.map((post) => (

@@ -12,16 +12,19 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Feed from '../feed/Feed'
-import UserProfile from '../userProfile/userProfile'
+import CreatePostModal from '../CreatePost/CreatePostModal';
 
 export default function Sidebar() {
-  const [sidebar, setSidebar] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
 
-  const hideSidebar = () => setSidebar(false);
- 
-  if (!sidebar) {
-    return null;
-  }
+  const hideSidebar = () => {
+    setModalOpen(false);
+  };
+
+  const handleAddPostClick = () => {
+    setModalOpen(true);
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebarWrapper">
@@ -51,10 +54,10 @@ export default function Sidebar() {
             </Link>
           </li>
           <li className="sidebarListItem">
-            <Link to="/Upload">
+            <div onClick={handleAddPostClick} className="addPostButton">
               <AddCircleOutlineIcon className="sidebarIcon" />
               <span className="sidebarListItemText">Upload</span>
-            </Link>
+            </div>
           </li>
           <li className="sidebarListItem">
             <Link to="/Profile">
@@ -76,6 +79,7 @@ export default function Sidebar() {
           </li>
         </ul>
       </div>
+      {isModalOpen && <CreatePostModal closeModal={hideSidebar} />}
     </div>
   );
 }
