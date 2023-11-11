@@ -1,22 +1,9 @@
 import Post from "../model/postModel.js";
 import User from '../model/User.model.js'
 import multer from 'multer';
+import querystring from "querystring";
 
-// // Check File Type
-// function checkFileType(file, cb){
-//     // Allowed ext
-//     const filetypes = /jpeg|jpg|png|gif/;
-//     // Check ext
-//     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-//     // Check mime
-//     const mimetype = filetypes.test(file.mimetype);
 
-//     if(mimetype && extname){
-//       return cb(null,true);
-//     } else {
-//       cb('Error: Images Only!');
-//     }
-// }
 
 export async function getAllPosts(req, res) {
   try {
@@ -111,100 +98,149 @@ export async function getMyPosts(req, res) {
 }
 
 export async function likePost(req, res) {
-  try {
-    const result = await Post.findByIdAndUpdate(
-      req.body.postId,
-      { $push: { likes: req.user._id } },
-      { new: true }
-    );
-    res.status(200).json({ result: "Liked Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(422).json({ error: "Invalid request" });
-  }
-}
-
-export async function unlikePost(req, res) {
-  try {
-    const result = await Post.findByIdAndUpdate(
-      req.body.postId,
-      { $pull: { likes: req.user._id } },
-      { new: true }
-    );
-    res.status(200).json({ result: "Unliked Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(422).json({ error: "Invalid request" });
-  }
-}
-
-export async function commentOnPost(req, res) {
-  // Extract relevant data from the request body
-  const { postId, text } = req.body;
-
-  // Validate the postId
-  if (!postId) {
-    return res.status(400).json({ error: 'Invalid postId' });
-  }
+  const postId = req.params.postId;
 
   try {
-    // Validate the post ID
-    const existingPost = await Post.findById(postId);
-    if (!existingPost) {
+    const post = await Post.findById(postId);
+    if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    // Create a new comment object with user information
-    const comment = {
-      text: text,
-      postedBy: req.user._id,
-      userProfilePic: req.user.profilePicture, // Assuming 'profilePicture' is the field in your User model for the user's profile picture
-      username: req.user.username,
-    };
+    if (post.likes.includes(req.user._id)) {
+      return res.status(400).json({ error: 'You have already liked this post' });
+    }
 
-    // Add the comment to the post's comments array
-    existingPost.comments.push(comment);
-    await existingPost.save();
-
-    // Populate the user information in the comments
-    await existingPost
-      .populate('comments.postedBy', '_id username') // Assuming 'postedBy' is the field in your comment schema for the user reference
-      .execPopulate();
-
-    // Return the updated post with populated comments and user information
-    res.json(existingPost);
+    post.likes.push(req.user._id);
+    await post.save();
+    res.status(200).json({ message: 'Post liked successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
-//   export async function deletePost(req, res) {
-//     try {
-//         const postId = req.params.postId;
-//         const post = await Post.findOne({ _id: postId }).populate("postedBy", "_id");
+export async function unlikePost(req, res) {
+  const postId = req.params.postId;
 
-//         if (!post) {
-//             return res.status(404).json({ error: "Post not found" });
-//         }
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
 
-//         // Ensure the post has a valid 'postedBy' field before comparing IDs
-//         if (!post.postedBy || !post.postedBy._id) {
-//             return res.status(500).json({ error: "Invalid post data" });
-//         }
+    if (!post.likes.includes(req.user._id)) {
+      return res.status(400).json({ error: 'You have not liked this post yet' });
+    }
 
-//         // Check if the current user is the creator of the post
-//         if (post.postedBy._id.toString() === req.user._id.toString()) {
-//             await post.remove();
-//             return res.status(200).json({ message: "Post deleted successfully" });
-//         } else {
-//             return res.status(401).json({ error: "Unauthorized request" });
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// }
+    post.likes = post.likes.filter(userId => userId.toString() !== req.user._id.toString());
+    await post.save();
+    res.status(200).json({ message: 'Post unliked successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export async function commentOnPost(req, res) {
+  const { postId, text } = req.body;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const comment = {
+      text,
+      postedBy: req.user._id,
+      userProfilePic: req.user.profilePicture, // Assuming 'profilePicture' is the field in your User model for the user's profile picture
+      username: req.user.username,
+    };
+
+    post.comments.push(comment);
+    await post.save();
+    
+    // Populate the user information in the comments
+    await post.populate('comments.postedBy', '_id username').execPopulate();
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export async function commentOnComment(req, res) {
+  const postId = req.params.postId;
+  const commentId = req.params.commentId;
+  const { text } = req.body;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const comment = post.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    const newComment = {
+      text,
+      postedBy: req.user._id,
+      likes: [], // Initialize likes array for the new comment
+    };
+
+    comment.comments.push(newComment);
+    await post.save();
+
+    // Populate the user information in the comments
+    await post
+      .populate('comments.postedBy', '_id username') // Assuming 'postedBy' is the field in your comment schema for the user reference
+      .execPopulate();
+
+    res.status(201).json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export async function sharePost(req, res) {
+  const postId = req.params.postId;
+  const { platform } = req.body;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const postUrl = `http://localhost:3000/post/${postId}`; // Replace with your actual frontend URL
+
+    let shareUrl;
+    switch (platform) {
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`;
+        break;
+      case "twitter":
+        shareUrl = `https://twitter.com/share?url=${encodeURIComponent(postUrl)}`;
+        break;
+      case "whatsapp":
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(postUrl)}`;
+        break;
+      // Add more cases for other social media platforms if needed
+      default:
+        return res.status(400).json({ error: 'Invalid platform' });
+    }
+
+    res.status(200).json({ shareUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
 
 export async function Timeline(req, res) {
   try {

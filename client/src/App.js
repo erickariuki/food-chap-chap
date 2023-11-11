@@ -79,8 +79,9 @@ function App() {
             console.error(error);
             // Handle error or redirect to login
         });
-}, []);
-console.log(user, "Not Working");
+          console.log(user, "Not Working");
+        }, [user]);
+      
 
   useEffect(() => {
     fetch("/blogs")

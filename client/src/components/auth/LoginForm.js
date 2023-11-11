@@ -18,37 +18,47 @@ function LoginForm({ onLogin }) {
   }
   
 
-    function handleSubmit(e) {
-      e.preventDefault();
+  function handleSubmit(e) {
+    e.preventDefault();
   
-      fetch("http://localhost:8080/api/login", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-              credentials: 'include', // Include credentials (cookies, etc.)
-          },
-          body: JSON.stringify({ username, password }),
-      })
-          .then((r) => {
-              if (r.ok) {
-                  r.json().then((response) => {
-                      const { user, token } = response;
-                      onLogin(user);
+    fetch("http://localhost:8080/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: 'include', // Include credentials (cookies, etc.)
+      },
+      body: JSON.stringify({ username, password }),
+    })
+    .then((r) => {
+      if (r.ok) {
+        r.json().then((response) => {
+          const { user, token } = response;
+          onLogin(user);
   
-                      console.log(response);
-                      setErrorMessage(null);
-                      redirectToDashboard(user, token);
-                  });
-              } else {
-                  r.text().then((errorMessage) => {
-                      setErrorMessage(errorMessage || "Login details do not match");
-                  });
-              }
-          })
-          .catch((error) => {
-              setErrorMessage("An error occurred. Please try again.");
-          });
+          console.log(response);
+          setErrorMessage(null);
+          
+          // Store the user ID in the local storage
+          if (user && user._id) { // Check if user and user._id are defined
+            localStorage.setItem('userId', user._id); // Assuming the user ID is stored in 'user._id'
+          }
+  
+          redirectToDashboard(user, token);
+        });
+      } else {
+        r.text().then((errorMessage) => {
+          setErrorMessage(errorMessage || "Login details do not match");
+        });
+      }
+    })
+    .catch((error) => {
+      setErrorMessage("An error occurred. Please try again.");
+    });
   }
+  
+  
+  
+  
   
 
     return (

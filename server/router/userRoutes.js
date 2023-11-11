@@ -3,8 +3,8 @@ const router = express.Router();
 import Auth from "../middleware/auth.js";
 import { getUser, followUser, unfollowUser, updateProfilePic, searchUsers, listUsers }from "../controllers/userController.js";
 
-router.get("/", Auth, listUsers);
-router.get("/:id", Auth, getUser);
+router.get("/users",listUsers);
+router.get("/", getUser);
 router.put("/follow", Auth, followUser);
 router.put("/unfollow", Auth, unfollowUser);
 router.put("/updatepic", Auth, updateProfilePic);

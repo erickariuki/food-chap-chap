@@ -1,90 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { TextField, Button } from '@material-ui/core';
-import FileBase from 'react-file-base64';
-import './createpost.css'
+import React, { useState } from 'react';
+import axios from 'axios';
 
-const Form = ({ posts }) => {
- const [postData, setPostData] = useState({ title: '', body: '', pic: '' });
- const [userData, setUserData] = useState({ username: '', profilePic: '' });
- const [preview, setPreview] = useState('');
+const CreatePost = () => {
+ const [postData, setPostData] = useState({ title: '', body: '' });
+ const [postLink, setPostLink] = useState('');
 
- useEffect(() => {
-   fetch('http://localhost:8080/api/user')
-     .then(response => response.json())
-     .then(data => setUserData(data))
-     .catch(error => console.error('Error:', error));
-
-   if (posts && posts._id) {
-     fetch(`http://localhost:8080/api/posts/${posts._id}`)
-       .then(response => response.json())
-       .then(data => setPostData(data))
-       .catch(error => console.error('Error:', error));
-   }
- }, [posts]);
-
- const clear = () => {
-   setPostData({ title: '', body: '', pic: '' });
- };
-
- const handleSubmit = async (e) => {
-   e.preventDefault();
-
-   if (posts && !posts._id) {
-     fetch('http://localhost:8080/api/posts/createpost', {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-       body: JSON.stringify(postData),
-     })
-       .then(response => response.json())
-       .then(data => {
-         console.log('Success:', data);
-         clear();
-       })
-       .catch((error) => {
-         console.error('Error:', error);
-       });
-   } else if (posts && posts._id) {
-     fetch(`http://localhost:8080/api/posts/updatepost/${posts._id}`, {
-       method: 'PUT',
-       headers: {
-         'Content-Type': 'application/json',
-       },
-       body: JSON.stringify(postData),
-     })
-       .then(response => response.json())
-       .then(data => {
-         console.log('Success:', data);
-         clear();
-       })
-       .catch((error) => {
-         console.error('Error:', error);
-       });
-   }
- };
-
- const handleProfileClick = () => {
-   window.location.href = `/user/${userData._id}`;
+ const handleSubmit = async (event) => {
+  event.preventDefault();
+  try {
+    const response = await axios.post('http://localhost:8080/api/posts/createpost', postData);
+    setPostLink(response.data.link);
+  } catch (error) {
+    console.error('Error creating post', error);
+  }
  };
 
  return (
-   <form className="form" onSubmit={handleSubmit}>
-     
-     <h1>{posts && posts._id ? `Editing "${postData.title}"` : 'Create Your Own Post'}</h1>
-     <TextField label="Title" value={postData.title} onChange={(e) => setPostData({ ...postData, title: e.target.value })} />
-     <TextField label="Message" multiline rows={4} value={postData.body} onChange={(e) => setPostData({ ...postData, body: e.target.value })} />
-     <div>
-       <FileBase type="file" multiple={false} onDone={({ base64 }) => {
-         setPostData({ ...postData, pic: base64 });
-         setPreview(base64);
-       }} />
-     </div>
-     <div className="button-container">
-       <Button className='sub' type="submit">Submit</Button>
-     </div>
-   </form>
+  <div>
+    <form onSubmit={handleSubmit}>
+      <input type="text" value={postData.title} onChange={(e) => setPostData({ ...postData, title: e.target.value })} placeholder="Title" />
+      <textarea value={postData.body} onChange={(e) => setPostData({ ...postData, body: e.target.value })} placeholder="Body" />
+      <button type="submit">Create Post</button>
+    </form>
+    {postLink && <div>Post created at: {postLink}</div>}
+  </div>
  );
 };
 
-export default Form;
+export default CreatePost;

@@ -1,21 +1,32 @@
 import express from "express";
 const router = express.Router();
 import Auth from "../middleware/auth.js";
-import { getAllPosts, Timeline, getSubscribedPosts, createPost, updatePost, getUserProfile,getMyPosts, likePost, unlikePost, commentOnPost, deletePost } from "../controllers/postControllers.js";
-// import { upload } from '../middleware/upload.js';
+import {
+  getAllPosts,
+  getSubscribedPosts,
+  createPost,
+  updatePost,
+  getMyPosts,
+  likePost,
+  unlikePost,
+  commentOnPost,
+  sharePost,
+  Timeline,
+  getUserProfile,
+  deletePost
+} from "../controllers/postControllers.js";
 
-
-router.get("/",  getAllPosts);
+router.get("/", getAllPosts);
 router.get("/getsubpost", Auth, getSubscribedPosts);
-router.post('/createpost', Auth,  createPost);
-router.post('/updatepost', Auth,  updatePost);
+router.post('/createpost', Auth, createPost);
+router.put('/updatepost/:id', Auth, updatePost);
 router.get("/mypost", Auth, getMyPosts);
-router.put("/like", Auth, likePost);
-router.put("/unlike", Auth, unlikePost);
-router.put("/comment", Auth, commentOnPost);
+router.post("/:postId/like", Auth, likePost);
+router.post("/:postId/unlike", Auth, unlikePost);
+router.post("/comment", Auth, commentOnPost);
+router.post("/:postId/share", Auth, sharePost);
 router.delete("/deletepost/:id", Auth, deletePost);
-router.get("/timeline/:userId", Timeline)
-router.get("/UserProfile/:username", getUserProfile)
-
+router.get("/timeline/:userId", Timeline);
+router.get("/UserProfile/:username", getUserProfile);
 
 export default router;

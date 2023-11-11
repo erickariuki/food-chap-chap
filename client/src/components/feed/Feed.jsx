@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import './feed.css';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import IconButton from '@mui/material/IconButton';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import Typography from '@mui/material/Typography';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import CommentIcon from '@mui/icons-material/Comment';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+
+
+
 import { Link } from 'react-router-dom';
 
 // Import your icons here
@@ -14,49 +26,35 @@ const Feed = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({});
   const [followStates, setFollowStates] = useState({});
+  const [followingUsers, setFollowingUsers] = useState([]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    // Fetch posts and user data
+    const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:8080/api/posts");
-        if (Array.isArray(response.data.posts)) {
-          setPosts(response.data.posts);
-          setLoading(false);
-        } else {
-          console.error("Error: fetched data is not an array");
-        }
+        setPosts(response.data.posts);
+        setLoading(false);
+
+        const userResponse = await axios.get("http://localhost:8080/api/user");
+        setUser(userResponse.data);
+
+        // Update followStates based on fetched data
+        const newFollowStates = {};
+        response.data.posts.forEach(post => {
+          newFollowStates[post.postedBy._id] = post.postedBy.followers.includes(userResponse.data._id);
+        });
+        setFollowStates(newFollowStates);
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching data:", error);
         setLoading(false);
       }
     };
 
-    fetchPosts();
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const config = {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    };
-
-    axios.get(`http://localhost:8080/api/user`, config)
-      .then(response => {
-        setUser(response.data);
-        const newFollowStates = {};
-        posts.forEach(post => {
-          newFollowStates[post.postedBy._id] = post.postedBy.followers.includes(response.data._id);
-        });
-        setFollowStates(newFollowStates);
-      })
-      .catch(error => {
-        console.error("Error fetching user data:", error);
-      });
-  }, [posts]);
-
-  const followUser = async (userId) => {
+  const handleFollowToggle = async (userId) => {
     try {
       const token = localStorage.getItem('token');
       const config = {
@@ -64,14 +62,22 @@ const Feed = () => {
           'Authorization': `Bearer ${token}`
         }
       };
-      await axios.put(`http://localhost:8080/api/user/follow`, { followId: userId }, config);
-      setFollowStates(prevState => ({ ...prevState, [userId]: true }));
+
+      if (followingUsers.includes(userId)) {
+        // User is currently following, unfollow them
+        await axios.delete(`http://localhost:8080/api/user/unfollow/${userId}`, config);
+        setFollowingUsers(prevFollowingUsers => prevFollowingUsers.filter(id => id !== userId));
+      } else {
+        // User is not following, follow them
+        await axios.post(`http://localhost:8080/api/user/follow/${userId}`, {}, config);
+        setFollowingUsers(prevFollowingUsers => [...prevFollowingUsers, userId]);
+      }
     } catch (error) {
-      console.error("Error following user:", error.message);
+      console.error("Error toggling follow:", error);
     }
   };
 
-  const unfollowUser = async (userId) => {
+  const handleLike = async (postId) => {
     try {
       const token = localStorage.getItem('token');
       const config = {
@@ -79,10 +85,47 @@ const Feed = () => {
           'Authorization': `Bearer ${token}`
         }
       };
-      await axios.put(`http://localhost:8080/api/user/unfollow`, { unfollowId: userId }, config);
-      setFollowStates(prevState => ({ ...prevState, [userId]: false }));
+
+      // Send a request to like the post
+      await axios.post(`http://localhost:8080/api/posts/${postId}/like`, {}, config);
+
+      // Update the local state to indicate that the post has been liked
+      setPosts(prevPosts =>
+        prevPosts.map(post => (post._id === postId ? { ...post, liked: true } : post))
+      );
     } catch (error) {
-      console.error("Error unfollowing user:", error.message);
+      console.error("Error liking post:", error);
+    }
+  };
+
+  const handleComment = async (postId, commentText) => {
+    try {
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+
+      // Send a request to add a comment to the post
+      await axios.post(`http://localhost:8080/api/posts/${postId}/comments`, { text: commentText }, config);
+
+      // Fetch updated comments for the post and update the local state
+      const response = await axios.get(`http://localhost:8080/api/posts/${postId}/comments`);
+      setPosts(prevPosts =>
+        prevPosts.map(post => (post._id === postId ? { ...post, comments: response.data } : post))
+      );
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
+
+  const handleShare = async (postId, platform) => {
+    try {
+      const response = await axios.post(`http://localhost:8080/api/posts/${postId}/share`, { platform });
+      window.open(response.data.shareUrl, '_blank');
+    } catch (error) {
+      console.error('Error sharing post:', error);
     }
   };
 
@@ -108,50 +151,68 @@ const Feed = () => {
           </div>
         </div>
       </div>
-      <div className="grid-container">
+      <div className="posts">
         {posts.map((post) => (
-          <div className="card" key={post._id}>
-            <div className="card-header">
-              <div className="user-info">
+          <Card className="blog-card" key={post._id}>
+            <div className="blog-header">
+              <div className="blog-user-info">
+                <AccountCircle />
                 {post.postedBy && (
                   <>
-                    <div className="user-profile-pic">
-                      <img src={post.postedBy.profilePic} alt="User Profile" />
-                    </div>
-                    <div className="user-profile-info">
-                      <h5>{post.postedBy.username}</h5>
-                    </div>
-                  </>
-                )}
-              </div>
-              <div className="follow-button">
-                {post.postedBy && (
-                  <>
-                    {followStates[post.postedBy._id] ? (
-                      <button className="btn-fol" onClick={() => unfollowUser(post.postedBy._id)}>Following</button>
-                    ) : (
-                      <button className="btn-fol" onClick={() => followUser(post.postedBy._id)}>Follow</button>
-                    )}
+                    <Typography variant="h6">
+                      {post.postedBy.name}
+                    </Typography>
+                    <Typography variant="subtitle1">
+                      @{post.postedBy.username}
+                    </Typography>
                   </>
                 )}
               </div>
             </div>
-            <Link to={`/post/${post._id}`}>
-            <div className="card-body">
-                <h5 className="card-title">{post.title}</h5>
-                <p className="card-text">{post.content.substring(0, 100)}...</p>
+              <div className="follow-button-container" onClick={() => handleFollowToggle(post.postedBy._id)}>
+                <PersonAddAltIcon />
               </div>
-              <div className="card-img-container">
-                <img className="card-img" src={post.image} alt="Post" />
+            <div className="blog-content">
+              <CardContent>
+                <Typography variant="h5" component="div">
+                  {post.title}
+                </Typography>
+                <Typography variant="body2">
+                  {post.content}
+                </Typography>
+              </CardContent>
+            </div>
+            <CardMedia
+              component="img"
+              height="140"
+              image={post.image}
+              alt="Post Image"
+            />
+            <IconButton>
+              <div onClick={() => handleLike(post._id)}>
+                <FavoriteIcon color={post.liked ? 'secondary' : 'action'} />
               </div>
-              
-            </Link>
-          </div>
+            </IconButton>
+            <IconButton>
+              <div onClick={() => handleShare(post._id, 'facebook')}>
+                <ShareIcon />
+              </div>
+            </IconButton>
+            <IconButton>
+              <div onClick={() => handleComment(post._id, 'Your comment text')}>
+                <CommentIcon />
+              </div>
+            </IconButton>
+            <IconButton>
+              <div>
+                <MoreHorizIcon />
+              </div>
+            </IconButton>
+          </Card>
         ))}
       </div>
     </div>
   );
-
 }
 
 export default Feed;

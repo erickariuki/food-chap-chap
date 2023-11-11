@@ -15,6 +15,7 @@ import blogRouter from './router/blogRoutes.js';
 import cuisineRouter from './router/cuisineRoutes.js';
 import bookingRouter from './router/bookingRoute.js';
 import foodRouter from './router/foodRoutes.js';
+
 // Create an Express application
 const app = express();
 
@@ -22,12 +23,11 @@ const app = express();
 const secretKey = crypto.randomBytes(32).toString('hex');
 
 // Middleware for handling CORS (configure with your allowed origins)
-// app.use(cors({
-//   origin: ['http://localhost:4000', 'http://localhost:8080'],
-//   methods: ['GET', 'PUT', 'POST', 'DELETE'],
-//   allowedHeaders: ['Content-Type'],
-// }));
-app.use(cors({ origin: 'http://localhost:4000' }));
+const corsOptions = {
+  origin: 'http://localhost:4000', // Replace with your frontend's origin
+  credentials: true, // Allow cookies and credentials for cross-origin requests
+};
+app.use(cors(corsOptions));
 
 
 // Middleware to parse JSON in request bodies
@@ -62,6 +62,7 @@ app.use('/api/posts', postRouter);
 app.use('/api/blogs', blogRouter);
 app.use('/api/cuisines', cuisineRouter);
 app.use('/api/bookings', bookingRouter);
+
 // Basic route for the root URL
 app.get('/', (req, res) => {
   res.status(200).send('Welcome to your food store application');

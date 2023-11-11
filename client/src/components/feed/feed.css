@@ -19,6 +19,7 @@
   align-items: center;
   margin-right: 150px;
   
+  
 }
 
 .page-title {
@@ -32,41 +33,7 @@
 }
 
 
-.card-img {
-  width: 100%;
-  /* Makes the image take up the full width of the card */
-  height: 200px;
-  /* Sets a static height */
-  object-fit: cover;
-  /* Ensures the image covers the area without stretching */
-}
 
-.card-body {
-  padding: 20px;
-  /* Padding around the card content */
-}
-
-.card-title {
-  margin-bottom: 10px;
-  /* Space between the title and the text */
-  font-size: 24px;
-  /* Make the title larger */
-}
-
-.card-text {
-  flex-grow: 1;
-  /* Makes the text area take up all available space */
-}
-
-.card-header {
-  padding: 10px 20px;
-  /* Padding around the footer */
-  background-color: #f0f0f0;
-  /* Background color for the footer */
-  display: flex;
-  font-size: 14px;
-  /* Smaller font size for the footer */
-}
 
 .MoreIcons {
   display: flex;
@@ -121,6 +88,8 @@
   box-shadow: -1px -5px 19px 9px rgba(0, 0, 0, 0.49);
   -webkit-box-shadow: -1px -5px 19px 9px rgba(0, 0, 0, 0.49);
   -moz-box-shadow: -1px -5px 19px 9px rgba(0, 0, 0, 0.49);
+  width: 250px;
+  height: 250px;
 }
 
 .card-header {
@@ -149,16 +118,17 @@
 }
 
 .card-img-container {
-  width: 100%;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   overflow: hidden;
   border-radius: 5px;
 }
 
 .card-img {
-  width: 100%;
-  height: 100%;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
+  align-items: center;
 }
 
 .card-body {
@@ -171,10 +141,11 @@
 }
 
 .card-text {
-  margin-top: 5px;
-  font-size: 14px;
+  /* margin-top: 5px; */
+  font-size: 10px;
   height: 50px;
   overflow: hidden;
+  margin-bottom: none;
 }
 
 .btn-fol {
@@ -191,3 +162,18 @@
   }
 }
 
+.posts{
+  margin-left: 20px;
+}
+
+.blog-card {
+  position: relative;
+  /* Other styles for the card */
+}
+
+.follow-button-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}

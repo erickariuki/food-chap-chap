@@ -1,75 +1,29 @@
-.form {
+.PostShare {
+  display: flex;
+  gap: 1rem;
+  background-color: var(--cardColor);
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.PostShare > img {
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+}
+
+.PostShare > div {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 80%;
-  padding: 20px;
-  margin: 0 auto;
-  background: none;
+  width: 90%;
+  gap: 1rem;
+}
+
+.PostShare > div > input {
+  background-color: var(--inputColor);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 17px;
   border: none;
-  position: relative;  /* Add this line */
-}
-
-.form .user-info {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-
-.form h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.2em;  /* Make the title smaller */
-}
-
-.form .MuiTextField-root {
-  width: 100%;  /* Make the textarea take the full width of the form */
-  margin-bottom: 20px;
-  margin: 10px 0;
-  border: none;
-}
-
-.form .MuiTextField-root textarea {
-  height: auto;  /* Make the body textarea auto-resize */
-  min-height: 10px;  /* Set a minimum height */
-  max-height: 1000px;  /* Set a maximum height */
-  resize: vertical;  /* Allow the user to resize the textarea vertically */
-}
-
-.form .button-container {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  
-}
-
-.form .MuiButton-root {
-  flex-grow: 1;
-  margin-top: 20px;
-}
-
-
-
-.form .user-info img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-  cursor: pointer;
-}
-
-.form .user-info h2 {
-  margin: 0;
-}
-
-.sub {
-  background-color: black;
-}
-
-.clear{
-  background-color: black;
+  outline: none;
 }
