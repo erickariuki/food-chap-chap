@@ -4,7 +4,7 @@ import Auth from "../middleware/auth.js";
 import { getUser, followUser, unfollowUser, updateProfilePic, searchUsers, listUsers }from "../controllers/userController.js";
 
 router.get("/users",listUsers);
-router.get("/", getUser);
+router.get("/:username", getUser);
 router.put("/follow", Auth, followUser);
 router.put("/unfollow", Auth, unfollowUser);
 router.put("/updatepic", Auth, updateProfilePic);

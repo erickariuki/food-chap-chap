@@ -39,43 +39,50 @@ export async function verifyUser(req, res, next){
  * @param : 
 */
 export async function register(req, res) {
-    try {
-      const { username, password, profile, email } = req.body;
-  
-      // Check for existing username
-      const usernameExists = await UserModel.findOne({ username });
-      if (usernameExists) {
-        return res.status(400).json({ error: "Please use a unique username" });
-      }
-  
-      // Check for existing email
-      const emailExists = await UserModel.findOne({ email });
-      if (emailExists) {
-        return res.status(400).json({ error: "Please use a unique email" });
-      }
-  
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      const user = new UserModel({
-        username,
-        password: hashedPassword,
-        profile: profile || "",
-        email,
-      });
-  
-      // Save the user to the database
-      const result = await user.save();
-  
-      if (result) {
-        return res.status(201).json({ msg: "User registered successfully" });
-      } else {
-        return res.status(500).json({ error: "User registration failed" });
-      }
-    } catch (error) {
-      return res.status(500).json({ error: "Unable to register user" });
+  try {
+    const { name, username, password, email, user_type, profilePic, followers, following } = req.body;
+
+    // Check for existing username
+    const usernameExists = await UserModel.findOne({ username });
+    if (usernameExists) {
+      return res.status(400).json({ error: "Please use a unique username" });
     }
+
+    // Check for existing email
+    const emailExists = await UserModel.findOne({ email });
+    if (emailExists) {
+      return res.status(400).json({ error: "Please use a unique email" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new UserModel({
+      name,
+      username,
+      user_type,
+      password: hashedPassword,
+      email,
+      profilePic: profilePic || '',
+      followers: followers || [],
+      following: following || []
+    });
+
+    // Save the user to the database
+    const result = await user.save();
+
+    if (result) {
+      return res.status(201).json({ msg: "User registered successfully" });
+    } else {
+      return res.status(500).json({ error: "User registration failed" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Unable to register user" });
   }
+}
+
+
   
 
 

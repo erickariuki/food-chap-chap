@@ -18,106 +18,106 @@ export async function listUsers(req, res) {
 // Get user by ID
 export async function getUser(req, res) {
   try {
-    const userId = req.params.id;
+    const { username } = req.params;
 
-    // Validate if userId is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ error: "Invalid user ID" });
-    }
+    // Find the user in the database
+    const user = await UserModel.findOne({ username: username });
 
-    const user = await User.findById(userId, "username email");
-
+    // Check if user exists
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).send({ error: "User not found" });
     }
 
-    res.status(200).json(user);
+    // Remove sensitive information from user
+    const { password, sensitiveInfo, ...rest } = user.toJSON();
+
+    return res.status(200).send(rest);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error:", error);
+    return res.status(500).send({ error: "An error occurred" });
   }
 }
-  
-    export async function getFriends(req, res) {
-      try {
-        const user = await User.findById(req.params.userId);
-        const friends = await Promise.all(
-          user.followings.map((friendId) => User.findById(friendId))
-        );
-        const friendList = friends.map(({ _id, username, profilePicture }) => ({
-          _id,
-          username,
-          profilePicture,
-        }));
-        res.status(200).json(friendList);
-      } catch (err) {
-        res.status(500).json(err);
-      }
-    };
-  
+
+export async function getFriends(req, res) {
+  try {
+    const user = await User.findById(req.params.userId);
+    const friends = await Promise.all(
+      user.followings.map((friendId) => User.findById(friendId))
+    );
+    const friendList = friends.map(({ _id, username, profilePicture }) => ({
+      _id,
+      username,
+      profilePicture,
+    }));
+    res.status(200).json(friendList);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 //Update profile pic
-export async function updateProfilePic(req, res){
+export async function updateProfilePic(req, res) {
   try {
     const { profilePic } = req.body;
     const userId = req.user.userId;
 
 
-    const user = await User.findByIdAndUpdate(userId, {profilePic}, { new: true});
-    if(!user){
-      return res.status(404).json({error: "User not found"});
+    const user = await User.findByIdAndUpdate(userId, { profilePic }, { new: true });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({message: "Profile picture updated successfully", data: user});
-  } catch (error){
+    res.status(200).json({ message: "Profile picture updated successfully", data: user });
+  } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
 //Follow another user
-export async function followUser(req, res){
+export async function followUser(req, res) {
   try {
     const followId = req.body.followId;
     const userId = req.user.userId; //when userId is not stored in the token
 
     //update user's following list
-    const user = await User.findByIdAndUpdate(userId, {$push: {following: followId}}, {new: true});
+    const user = await User.findByIdAndUpdate(userId, { $push: { following: followId } }, { new: true });
 
-    if(!user){
-      return res.status(404).json({error: "User not found"});
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
     //update the follower's list
-    await User.findByIdAndUpdate(followId, {$push: {following: userId}}, {new: true});
+    await User.findByIdAndUpdate(followId, { $push: { following: userId } }, { new: true });
 
-    res.status(200).json({ message: "User followed", data: user})
-  } catch(error){
+    res.status(200).json({ message: "User followed", data: user })
+  } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
 //unfollow another user
-export async function unfollowUser(req, res){
+export async function unfollowUser(req, res) {
   try {
     const unfollowId = req.body.unfollowId;
     const userId = req.user.userId; //when userId is not stored in the token
-    
+
     //Remove the user from the followers list
-    await User.findByIdAndUpdate(unfollowId, { $pull: { followers: userId} }, {new: true});
+    await User.findByIdAndUpdate(unfollowId, { $pull: { followers: userId } }, { new: true });
 
     //remove unfollowed user from users following list
-    const user = await User.findByIdAndUpdate(userId, {$pull: {following: unfollowId}}, {new: true});
+    const user = await User.findByIdAndUpdate(userId, { $pull: { following: unfollowId } }, { new: true });
 
-    if(!user){
-      return res.status(404).json({error: "User not found"});
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ message: "User unfollowed", data: user})
+    res.status(200).json({ message: "User unfollowed", data: user })
 
-  } catch(error){
+  } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
 

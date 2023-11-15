@@ -69,18 +69,17 @@ function App() {
 
   useEffect(() => {
     axios
-        .get('http://localhost:8080/api/user', {
-            withCredentials: true, // Include credentials (cookies, etc.)
-        })
-        .then((response) => {
-            setUser(response.data);
-        })
-        .catch((error) => {
-            console.error(error);
-            // Handle error or redirect to login
-        });
-          console.log(user, "Not Working");
-        }, [user]);
+      .get('http://localhost:8080/api/user', {
+        withCredentials: true, // Include credentials (cookies, etc.)
+      })
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.error("Error details:", error.response);
+      });
+  }, []);
+  
       
 
   useEffect(() => {
