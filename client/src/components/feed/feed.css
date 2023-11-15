@@ -80,20 +80,6 @@
   margin: 0 auto;
 }
 
-.card {
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  box-shadow: -1px -5px 19px 9px rgba(0, 0, 0, 0.49);
-  -webkit-box-shadow: -1px -5px 19px 9px rgba(0, 0, 0, 0.49);
-  -moz-box-shadow: -1px -5px 19px 9px rgba(0, 0, 0, 0.49);
-  width: 250px;
-  height: 250px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
 
 
 @media screen and (max-width: 600px) {
@@ -102,50 +88,88 @@
   }
 }
 
-.card-header {
+
+ 
+.card {
+  background-color: white;
+  border: 1px solid #bacdd8;
+  padding: 8px;
+  border-radius: 12px;
+  margin: 10px;
+  width: 300px;
+  position: relative;
+ }
+ 
+ .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.user-details {
+ }
+ 
+ .user-details {
   display: flex;
-  flex-direction: column;
-}
-
-.profile-pic {
+  align-items: center;
+ }
+ 
+ .profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   margin-right: 10px;
-}
-
-.follow-button {
-  align-self: flex-end;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.post-body {
-  margin-top: 10px;
-}
-
-.show-more-button {
-  margin-top: 10px;
-}
-
-.card-footer {
+  cursor: pointer;
+ }
+ 
+ .follow-button {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+ }
+ 
+ .card-body {
+  margin-top: 20px;
+ }
+ 
+ .post-body {
+  margin-top: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  max-height: 50px;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ }
+ 
+ .post-body.expanded {
+  max-height: none;
+ }
+ 
+ .card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.action-icons {
+  margin-top: 20px;
+ }
+ 
+ .action-icons {
   display: flex;
-  justify-content: flex-start;
-}
-
-.more-options {
-  align-self: flex-end;
-}
+  align-items: center;
+ }
+ 
+ .show-more-button {
+  margin-top: 20px;
+ }
+ 
+ .more-options {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+ }
+ 
+ .card img {
+  width: 100%;
+  height: auto;
+ }
+ 

@@ -29,6 +29,8 @@ const Feed = () => {
   const [users, setUsers] = useState({});
   const [followStates, setFollowStates] = useState({});
   const [followingUsers, setFollowingUsers] = useState([]);
+  const [expanded, setExpanded] = useState({});
+
 
   useEffect(() => {
     setLoading(true);
@@ -153,6 +155,14 @@ const Feed = () => {
     }
   };
 
+  const handleExpandClick = (id) => {
+    setExpanded({
+      ...expanded,
+      [id]: !expanded[id]
+    });
+  };
+
+
   if (loading) {
     return <div>Loading...</div>; // Show loading message while data is being fetched
   }
@@ -179,7 +189,7 @@ const Feed = () => {
       </div>
       <div className="posts">
         {posts.map((post) => (
-          <Card className="card">
+          <Card key={post._id} className="card">
             <div className="card-header">
               <div className="user-details">
                 <img src={post.author && post.author.profilePic} alt="Profile Pic" className="profile-pic" />
@@ -198,10 +208,16 @@ const Feed = () => {
               <Typography variant="h6">
                 {post.title}
               </Typography>
-              <div className="post-body">
-                {post.body}
+              <div className={`post-body ${expanded[post._id] ? 'expanded' : ''}`}>
+                {post.content}
               </div>
-              <Button className="show-more-button">Show More</Button>
+              <Button className="show-more-button" onClick={() => handleExpandClick(post._id)}>
+                {expanded[post._id] ? 'Show Less' : 'Show More'}
+              </Button>
+              <Typography variant="image">
+                {post.image && <img src={post.image} alt="Post" />}
+              </Typography>
+
             </div>
             <div className="card-footer">
               <div className="action-icons">
