@@ -5,18 +5,18 @@ import querystring from "querystring";
 
 
 
-export async function getAllPosts(req, res) {
+export async function getAllPosts(req, res, next) {
   try {
     const posts = await Post.find()
       .populate("postedBy", "_id name")
       .populate("comments.postedBy", "_id name")
       .sort("-createdAt");
-    res.json({ posts });
+    res.json(posts);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
-}
+ }
+ 
 
 export async function getSubscribedPosts(req, res) {
   try {
@@ -31,30 +31,23 @@ export async function getSubscribedPosts(req, res) {
   }
 }
 
-export async function createPost(req, res) {
+export async function createPost(req, res, next) {
   const { title, body } = req.body;
-
-  // Check if an image file is uploaded
-  // if (!req.file) {
-  //   return res.status(422).json({ error: "Please upload an image" });
-  // }
-
-  // Set the postedBy field based on the authenticated user
+ 
   req.body.postedBy = req.user._id;
-
+ 
   try {
     const post = await Post.create({
       title,
       text: body,
-      // image: req.file.path,  // Save the file path in the database
       postedBy: req.body.postedBy
     });
     res.json({ post });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
-}
+ }
+ 
 
 export async function updatePost(req, res) {
   const { title, body } = req.body;

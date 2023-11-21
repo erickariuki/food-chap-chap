@@ -21,7 +21,7 @@ export async function getUser(req, res) {
     const { username } = req.params;
 
     // Find the user in the database
-    const user = await UserModel.findOne({ username: username });
+    const user = await User.findOne({ username: username });
 
     // Check if user exists
     if (!user) {

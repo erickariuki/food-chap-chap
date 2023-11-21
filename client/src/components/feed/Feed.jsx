@@ -1,246 +1,192 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import './feed.css';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import IconButton from '@mui/material/IconButton';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Grid from 'react-grid-layout';
+import Modal from 'react-modal';
+import "./feed.css"
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
-import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import CommentIcon from '@mui/icons-material/Comment';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import IconButton from '@mui/material/IconButton';
 import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
 
-
-
-
-import { Link } from 'react-router-dom';
-
-// Import your icons here
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState({});
-  const [followStates, setFollowStates] = useState({});
-  const [followingUsers, setFollowingUsers] = useState([]);
-  const [expanded, setExpanded] = useState({});
+  const [user, setUser] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [expandedPosts, setExpandedPosts] = useState({});
 
 
   useEffect(() => {
-    setLoading(true);
+    const fetchUser = async () => {
+      const response = await axios.get('http://localhost:8080/api/user/:username')
+        .then(response => {
+          setUser(response.data);
+        })
+        .catch(error => {
+          if (error.response && error.response.status === 404) {
+            console.log('The requested resource could not be found.');
+          } else {
+            console.log('An error occurred.', error);
+          }
+        });
 
-    const fetchPosts = async () => {
-      try {
-        const postResponse = await axios.get('http://localhost:8080/api/posts');
-
-        if (postResponse.data && Array.isArray(postResponse.data.posts)) {
-          const postWithUserData = await Promise.all(
-            postResponse.data.posts.map(async (post) => {
-              if (post.author && post.author.username) {
-                const userResponse = await axios.get(`http://localhost:8080/api/user/${post.author.username}`);
-                return { ...post, author: userResponse.data };
-              } else {
-                return post;
-              }
-            })
-          );
-
-          setPosts(postWithUserData);
-        } else {
-          console.error('Error:', postResponse.status, postResponse.data);
-        }
-
-        console.log(postResponse.data);
-      } catch (error) {
-        console.error('Error fetching posts:', error.response.data);
-      }
     };
 
-    fetchPosts();
+    const fetchPosts = async () => {
+      const response = await axios.get('http://localhost:8080/api/posts');
+      console.log(response)
+      setPosts(response.data);
+    };
 
-    setLoading(false);
+    fetchUser();
+    fetchPosts();
   }, []);
 
-
-  const handleFollowToggle = async (userId) => {
-    if (!userId) {
-      return;
+  const handleFollow = async () => {
+    if (!isFollowing) {
+      await axios.post('http://localhost:8080/api/user/follow', { followId: user._id });
+      setIsFollowing(true);
+    } else {
+      setIsModalOpen(true);
     }
-    try {
-      const token = localStorage.getItem('token');
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
+  };
 
-      if (followingUsers.includes(userId)) {
-        // User is currently following, unfollow them
-        await axios.delete(`http://localhost:8080/api/user/unfollow/${userId}`, config);
-        setFollowingUsers(prevFollowingUsers => prevFollowingUsers.filter(id => id !== userId));
-      } else {
-        // User is not following, follow them
-        await axios.post(`http://localhost:8080/api/user/follow/${userId}`, {}, config);
-        setFollowingUsers(prevFollowingUsers => [...prevFollowingUsers, userId]);
-      }
-    } catch (error) {
-      console.error("Error toggling follow:", error);
-    }
+  const handleUnfollow = async () => {
+    await axios.post('http://localhost:8080/api/user/unfollow', { unfollowId: user._id });
+    setIsFollowing(false);
+    setIsModalOpen(false);
   };
 
   const handleLike = async (postId) => {
-    if (!postId) {
-      return;
-    }
-    try {
-      const token = localStorage.getItem('token');
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
-
-      // Send a request to like the post
-      await axios.post(`http://localhost:8080/api/posts/${postId}/like`, {}, config);
-
-      // Update the local state to indicate that the post has been liked
-      setPosts(prevPosts =>
-        prevPosts.map(post => (post._id === postId ? { ...post, liked: true } : post))
-      );
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
+    await axios.post(`http://localhost:8080/api/posts/${postId}/like`);
+    setIsLiked(true);
   };
 
-  const handleComment = async (postId, commentText) => {
-    if (!postId) {
-      return;
-    }
-    try {
-      const token = localStorage.getItem('token');
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
-
-      // Send a request to add a comment to the post
-      await axios.post(`http://localhost:8080/api/posts/${postId}/comments`, { text: commentText }, config);
-
-      // Fetch updated comments for the post and update the local state
-      const response = await axios.get(`http://localhost:8080/api/posts/${postId}/comments`);
-      setPosts(prevPosts =>
-        prevPosts.map(post => (post._id === postId ? { ...post, comments: response.data } : post))
-      );
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    }
+  const handleUnlike = async (postId) => {
+    await axios.post(`http://localhost:8080/api/posts/${postId}/unlike`);
+    setIsLiked(false);
   };
+
 
   const handleShare = async (postId, platform) => {
-    if (!postId) {
-      return;
-    }
-    try {
-      const response = await axios.post(`http://localhost:8080/api/posts/${postId}/share`, { platform });
-      window.open(response.data.shareUrl, '_blank');
-    } catch (error) {
-      console.error('Error sharing post:', error);
-    }
-  };
-
-  const handleExpandClick = (id) => {
-    setExpanded({
-      ...expanded,
-      [id]: !expanded[id]
-    });
+    const response = await axios.post(`http://localhost:8080/api/posts/${postId}/share`, { platform });
+    window.open(response.data.shareUrl, '_blank');
   };
 
 
-  if (loading) {
-    return <div>Loading...</div>; // Show loading message while data is being fetched
-  }
-  console.log('Users:', users);
-  console.log('Posts:', posts);
+  const handleComment = async (postId, text) => {
+    await axios.post(`http://localhost:8080/api/posts/comment`, { postId, text });
+  };
+
+  const layout = [
+    { i: 'a', x: 0, y: 0, w: 1, h: 2 },
+    { i: 'b', x: 1, y: 0, w: 1, h: 2 },
+    { i: 'c', x: 2, y: 0, w: 1, h: 2 },
+  ];
 
   return (
-    <div className="feed">
-      <div className="sub-header align-center">
-        <div className="subheader-holder" >
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div className="text-holder">
-                  <div className="page-title ">
-                    <h1>Blogs</h1>
-                  </div>
-                  <p>Creating The World's Greatest Food Community with Food ChapChap</p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="feed-container">
+      {user && (
+        <div className="post-card">
+          <img src={user.profilePic} alt="Profile" />
+          <h2>{user.name} @{user.username}</h2>
+          <button onClick={handleFollow}>{isFollowing ? 'Following' : 'Follow'}</button>
+          <IconButton onClick={handleFollow}>
+            <PersonAddAltIcon />
+          </IconButton>
         </div>
-      </div>
-      <div className="posts">
-        {posts.map((post) => (
-          <Card key={post._id} className="card">
-            <div className="card-header">
-              <div className="user-details">
-                <img src={post.author && post.author.profilePic} alt="Profile Pic" className="profile-pic" />
-                <Typography variant="h6">
-                  {post.author ? post.author.name : 'Unknown'}
-                </Typography>
-                <Typography variant="subtitle1">
-                  @{post.author ? post.author.username : 'Unknown'}
-                </Typography>
-              </div>
-              <div className="follow-button" onClick={() => handleFollowToggle(post.author?._id)}>
-                <PersonAddAltIcon />
-              </div>
-            </div>
-            <div className="card-body">
-              <Typography variant="h6">
-                {post.title}
-              </Typography>
-              <div className={`post-body ${expanded[post._id] ? 'expanded' : ''}`}>
-                {post.content}
-              </div>
-              <Button className="show-more-button" onClick={() => handleExpandClick(post._id)}>
-                {expanded[post._id] ? 'Show Less' : 'Show More'}
-              </Button>
-              <Typography variant="image">
-                {post.image && <img src={post.image} alt="Post" />}
-              </Typography>
+      )}
+      {posts.map((post) => (
+        <div key={post._id} className="post-card">
+          <h2>{post.title}</h2>
+          <p>
+            {post.content && (
+              expandedPosts[post._id]
+                ? post.content
+                : post.content.slice(0, 100)
+            )}
+            {!expandedPosts[post._id] && (
+              <button onClick={() => setExpandedPosts({ ...expandedPosts, [post._id]: true })}>
+                Show More
+              </button>
+            )}
+          </p>
+          <img src={post.pic} alt="Post" className="post-image" />
 
-            </div>
-            <div className="card-footer">
-              <div className="action-icons">
-                <IconButton onClick={() => handleLike(post._id)}>
-                  <FavoriteIcon color={post.liked ? 'secondary' : 'action'} />
-                </IconButton>
-                <IconButton onClick={() => handleShare(post._id, 'facebook')}>
-                  <ShareIcon />
-                </IconButton>
-                <IconButton onClick={() => handleComment(post._id, 'Your comment text')}>
-                  <CommentIcon />
-                </IconButton>
-              </div>
-              <IconButton className="more-options">
-                <MoreHorizIcon />
-              </IconButton>
-            </div>
-          </Card>
+          <div className="icon-buttons">
+            <IconButton
+              onClick={() => {
+                if (isLiked) {
+                  handleUnlike(post._id);
+                } else {
+                  handleLike(post._id);
+                }
+              }}
+              style={{ color: isLiked ? 'red' : 'inherit' }}
+            >
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton onClick={handleShare}>
+              <ShareIcon />
+            </IconButton>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(null)}
+            >
+              <MenuItem onClick={() => {
+                handleShare(post._id, 'facebook');
+                setAnchorEl(null);
+              }}>
+                <FacebookIcon />
+              </MenuItem>
+              <MenuItem onClick={() => {
+                handleShare(post._id, 'twitter');
+                setAnchorEl(null);
+              }}>
+                <TwitterIcon />
+              </MenuItem>
+           // ... other social media icons ...
+            </Menu>
+            <IconButton onClick={() => setSelectedPost(post)}>
+              <CommentIcon />
+            </IconButton>
+          </div>
 
-        ))}
-      </div>
+          {selectedPost && (
+            <div>
+              <textarea onChange={(e) => setSelectedPost({ ...selectedPost, comment: e.target.value })} />
+              <button onClick={() => handleComment(selectedPost._id, selectedPost.comment)}>Post Comment</button>
+            </div>
+          )}
+
+        </div>
+      ))}
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+          <h2>Confirm Unfollow</h2>
+          <button onClick={handleUnfollow}>Confirm</button>
+          <button onClick={() => setIsModalOpen(false)}>Cancel</button>
+        </Modal>
+      )}
     </div>
   );
-}
+
+
+};
 
 export default Feed;

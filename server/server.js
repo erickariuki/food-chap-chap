@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import session from 'express-session';
@@ -29,6 +30,11 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// Middleware for Error Handling
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send('Something went wrong');
+ }); 
 
 // Middleware to parse JSON in request bodies
 app.use(express.json());
