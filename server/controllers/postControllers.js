@@ -94,6 +94,11 @@ export async function likePost(req, res) {
   const postId = req.params.postId;
 
   try {
+    // Check if the user is authenticated using Passport session
+    if (!req.isAuthenticated()) {
+      return res.status(403).json({ error: 'Access denied. User not authenticated.' });
+    }
+
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
@@ -111,6 +116,7 @@ export async function likePost(req, res) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
 
 export async function unlikePost(req, res) {
   const postId = req.params.postId;

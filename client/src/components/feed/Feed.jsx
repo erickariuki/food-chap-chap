@@ -56,7 +56,7 @@ const Feed = () => {
 
   const handleFollow = async () => {
     if (!isFollowing) {
-      await axios.post('http://localhost:8080/api/user/follow', { followId: user._id });
+      await axios.post('http://localhost:8080/api/user/follow', { followId: user._id }, null, { withCredentials: true });
       setIsFollowing(true);
     } else {
       setIsModalOpen(true);
@@ -64,30 +64,30 @@ const Feed = () => {
   };
 
   const handleUnfollow = async () => {
-    await axios.post('http://localhost:8080/api/user/unfollow', { unfollowId: user._id });
+    await axios.post('http://localhost:8080/api/user/unfollow', { unfollowId: user._id }, null, { withCredentials: true });
     setIsFollowing(false);
     setIsModalOpen(false);
   };
 
   const handleLike = async (postId) => {
-    await axios.post(`http://localhost:8080/api/posts/${postId}/like`);
+    await axios.post(`http://localhost:8080/api/posts/${postId}/like`, null, { withCredentials: true });
     setIsLiked(true);
   };
 
   const handleUnlike = async (postId) => {
-    await axios.post(`http://localhost:8080/api/posts/${postId}/unlike`);
+    await axios.post(`http://localhost:8080/api/posts/${postId}/unlike`, null, { withCredentials: true });
     setIsLiked(false);
   };
 
 
   const handleShare = async (postId, platform) => {
-    const response = await axios.post(`http://localhost:8080/api/posts/${postId}/share`, { platform });
+    const response = await axios.post(`http://localhost:8080/api/posts/${postId}/share`, null, { withCredentials: true }, { platform });
     window.open(response.data.shareUrl, '_blank');
   };
 
 
   const handleComment = async (postId, text) => {
-    await axios.post(`http://localhost:8080/api/posts/comment`, { postId, text });
+    await axios.post(`http://localhost:8080/api/posts/comment`, { postId, text }, null, { withCredentials: true });
   };
 
   const layout = [
@@ -123,7 +123,7 @@ const Feed = () => {
               </button>
             )}
           </p>
-          <img src={post.pic} alt="Post" className="post-image" />
+          <img src={post.image} alt="Post" className="post-image" />
 
           <div className="icon-buttons">
             <IconButton

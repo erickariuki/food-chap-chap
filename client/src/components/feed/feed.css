@@ -93,6 +93,18 @@
   height: 200px;
   object-fit: cover;
  }
+
+ button {
+  background-color: transparent;
+  border: none;
+  color: #000; /* Change this to your preferred color */
+  cursor: pointer;
+ }
+ 
+ button:hover {
+  color: #666; /* Change this to your preferred color */
+ }
+ 
  
   
  @media (max-width: 600px) {

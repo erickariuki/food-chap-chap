@@ -1,52 +1,29 @@
-/* .PostContainer{
-
-} */
-
-.SubPostContainer{
-  width: 93%;
+.post-container{
+  display: flex;
+  margin-top: 100px;
+  gap: 300px;
+  align-items: center;
   background-color: white;
-  margin-top: 20px;
-  margin-left: 20px;
-  border-radius: 10px;
 }
 
-.PostImage{
-  width: 40px;
-  height: 40px;
+.profile-details{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+}
+
+.profile-img{
+  height: 50px;
+  width: 50px;
   border-radius: 50%;
-  margin-left: 10px;
-}
-.PostImages{
-  width: 500px;
-  height: 450px;
   object-fit: cover;
-  border-radius: 10px;
 }
 
-.iconsforPost{
+.more{
+  height: 20px;
   width: 20px;
-  
-}
-
-.moreicons{
-  width: 20px;
-  margin-left: 380px;
-}
-
-.commentinput{
-  width: 24pc;
-  margin-left: 10px;
-  border: none;
-
-}
-.addCommentbtn{
-  padding: 9px;
-  border: none;
-  background-color: black;
-  color: white;
-  border-radius: 6px;
-  margin-left: 39px;
   cursor: pointer;
-  padding-left: 40px;
-  padding-right: 40px;
 }

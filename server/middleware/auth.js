@@ -1,35 +1,28 @@
+// Auth.js
 import jwt from 'jsonwebtoken';
-import ENV from '../config.js'
+import ENV from '../config.js';
 
-/** auth middleware */
 export default async function Auth(req, res, next) {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(403).json({ error: "Access denied." });
+    // Check if the user is authenticated using Passport session
+    if (!req.isAuthenticated()) {
+      return res.status(403).json({ error: 'Access denied.' });
     }
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-      return res.status(403).json({ error: "Access denied." });
-    }
-    const parts = token.split('.');
-    if (parts.length !== 3) {
-      return res.status(403).json({ error: "Access denied." });
-    }
-    const decodedToken = await jwt.verify(token, ENV.JWT_SECRET);
-    req.user = decodedToken;
-    console.log("Decoded Token:", decodedToken);
+
+    // You can still access user information using req.user
+    console.log('Authenticated User:', req.user);
+
     next();
   } catch (error) {
     console.error(error);
-    res.status(401).json({ error: "Authentication Failed!" });
+    res.status(401).json({ error: 'Authentication Failed!' });
   }
 }
 
-export function localVariables(req, res, next){
+export function localVariables(req, res, next) {
   req.app.locals = {
-    OTP : null,
-    resetSession : false
-  }
-  next()
+    OTP: null,
+    resetSession: false,
+  };
+  next();
 }
