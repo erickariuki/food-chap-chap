@@ -19,7 +19,7 @@ const Post = () => {
       .catch(error => console.error('Error fetching posts:', error));
   
     // Fetch user data separately
-    axios.get('http://localhost:8080/api/user')
+    axios.get('http://localhost:8080/api/getuser')
       .then(response => setUsers(response.data))
       .catch(error => console.error('Error fetching users:', error));
   }, []);
@@ -43,7 +43,7 @@ const Post = () => {
   };
 
   console.log(users, 'user not found')
-
+  console.log(posts)
   return (
     <div>
       {posts.map(post => {
@@ -63,7 +63,7 @@ const Post = () => {
             </div>
             <FiMoreHorizontal className='more' />
             <div className='post-details'>
-              <img src={post.image} className='post-image' alt='Post' />
+              <img src={post.pic} className='post-image' alt='Post' />
             </div>
             <div className='post-actions'>
               <div className='like-comment-icons'>
@@ -84,7 +84,7 @@ const Post = () => {
                   <p>Liked By Unknown</p>
                 )}
               </div>
-              <p><strong>{user ? user.username : 'Unknown'}</strong> {post.content}</p>
+              <p><strong>{user ? user.username : 'Unknown'}</strong> {post.body}</p>
               <span className='post-meta-comments'>Show all the {post.comments.length} comments</span>
               <p className='post-meta-time'>{new Date(post.createdAt).toLocaleString()}</p>
             </div>

@@ -15,26 +15,28 @@ export async function listUsers(req, res) {
   }
 }
 
-// Get user by ID
-export async function getUser(req, res) {
+export async function getUserPosts(req, res) {
   try {
     const { username } = req.params;
-
-    // Find the user in the database
     const user = await User.findOne({ username: username });
 
-    // Check if user exists
     if (!user) {
       return res.status(404).send({ error: "User not found" });
     }
 
+    // Retrieve posts for the user
+    const userPosts = await Post.find({ postedBy: user._id })
+      .populate("postedBy", "_id name")
+      .populate("comments.postedBy", "_id name")
+      .sort("-createdAt");
+
     // Remove sensitive information from user
     const { password, sensitiveInfo, ...rest } = user.toJSON();
 
-    return res.status(200).send(rest);
+    res.status(200).send({ user: rest, posts: userPosts });
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).send({ error: "An error occurred" });
+    res.status(500).send({ error: "An error occurred" });
   }
 }
 
@@ -140,3 +142,62 @@ export async function searchUsers(req, res) {
   }
 }
 
+export async function getUserProfile(req, res) {
+  try {
+    const { username } = req.params;
+
+    // Find the user in the database
+    const user = await User.findOne({ username: username });
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    // Retrieve posts for the user
+    const userPosts = await Post.find({ postedBy: user._id })
+      .populate("postedBy", "_id name")
+      .populate("comments.postedBy", "_id name")
+      .sort("-createdAt");
+
+    // Retrieve comments and replies for the user
+    const userComments = await Post.find({ "comments.postedBy": user._id })
+      .populate("postedBy", "_id name")
+      .populate("comments.postedBy", "_id name")
+      .sort("-createdAt");
+
+    // Retrieve liked posts for the user
+    const likedPosts = await Post.find({ likes: user._id })
+      .populate("postedBy", "_id name")
+      .populate("comments.postedBy", "_id name")
+      .sort("-createdAt");
+
+    // Other details like followers, following, etc.
+    const followers = await User.find({ _id: { $in: user.followers } });
+    const following = await User.find({ _id: { $in: user.following } });
+
+    // Assuming 'profilePicture' is the field in your User model for the user's profile picture
+    const { _id, name, profilePicture } = user;
+
+    // Assuming 'bio' is the field in your User model for the user's bio details
+    const { bio } = user;
+
+    const userProfile = {
+      _id,
+      name,
+      username: user.username, // Change variable name to avoid conflict
+      profilePicture,
+      bio,
+      followers,
+      following,
+      posts: userPosts,
+      comments: userComments,
+      likedPosts,
+    };
+
+    res.status(200).json(userProfile);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+}

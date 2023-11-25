@@ -14,7 +14,7 @@ import {
   commentOnPost,
   sharePost,
   Timeline,
-  getUserProfile,
+  getDrafts,
   deletePost
 } from "../controllers/postControllers.js";
 
@@ -30,7 +30,7 @@ router.post("/comment", Auth, commentOnPost);
 router.post("/:postId/share", Auth, sharePost);
 router.delete("/deletepost/:id", Auth, deletePost);
 router.get("/timeline/:userId", Auth, Timeline);
-router.get("/UserProfile/:username", Auth, getUserProfile);
+router.get("/getdrafts", Auth, getDrafts);
 
 // Passport.js route for Google OAuth2 login
 router.get(

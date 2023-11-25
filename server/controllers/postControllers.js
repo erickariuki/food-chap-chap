@@ -32,21 +32,23 @@ export async function getSubscribedPosts(req, res) {
 }
 
 export async function createPost(req, res, next) {
-  const { title, body } = req.body;
+  const { title, body, pic } = req.body;
  
   req.body.postedBy = req.user._id;
  
   try {
     const post = await Post.create({
       title,
-      text: body,
+      body, // Change 'text' to 'body' to match your schema
+      pic,  // Add 'pic' field to match your schema
       postedBy: req.body.postedBy
     });
     res.json({ post });
   } catch (error) {
-    next(error);
+    next(error, 'you cant');
   }
- }
+}
+
  
 
 export async function updatePost(req, res) {
@@ -289,3 +291,16 @@ export async function deletePost(req, res) {
   }
 };
 
+export async function getDrafts(req, res) {
+  try {
+    const drafts = await Post.find({ postedBy: req.user._id, isDraft: true })
+      .populate("postedBy", "_id name")
+      .populate("comments.postedBy", "_id name")
+      .sort("-createdAt");
+
+    res.status(200).json(drafts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}

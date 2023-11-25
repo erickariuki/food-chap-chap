@@ -4,7 +4,8 @@ import Rightbar from "../../components/rightbar/Rightbar";
 import Feed from '../../components/feed/Feed';
 import axios from 'axios';
 import Rider from "../../components/rider/riderRegistration"
-import Post from '../../components/post/Post'
+import Post from '../../components/post/Post';
+import { AuthProvider } from '../../context/AuthContext';
 
 import "./blog.css"
 
@@ -28,11 +29,14 @@ export default function Home() {
   return (
     <>
       <div className="homeContainer">
-        
+
         {/* <Sidebar user={user} />
         <Feed />
         <Rightbar user={user} /> */}
-        <Post />
+        <AuthProvider>
+          <Post />
+          {/* Other components */}
+        </AuthProvider>
       </div>
     </>
   );
